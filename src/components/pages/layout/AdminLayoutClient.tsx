@@ -4,10 +4,7 @@ import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AdminSidebar } from "@/components/pages/layout/AdminSidebar";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import {
-  BreadcrumbProvider,
-  AdminBreadcrumb,
-} from "@/components/pages/layout/AdminBreadcrumb";
+import { BreadcrumbProvider, AdminBreadcrumb } from "@/components/pages/layout/AdminBreadcrumb";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { Loader2 } from "lucide-react";
 
