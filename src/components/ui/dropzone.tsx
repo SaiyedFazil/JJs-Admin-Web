@@ -1,0 +1,249 @@
+"use client";
+
+import { CloudUpload, FileText, X } from "lucide-react";
+import type { ReactNode } from "react";
+import { createContext, useContext } from "react";
+import type { DropEvent, DropzoneOptions, FileRejection } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+type DropzoneContextType = {
+  src?: File[];
+  accept?: DropzoneOptions["accept"];
+  maxSize?: DropzoneOptions["maxSize"];
+  minSize?: DropzoneOptions["minSize"];
+  maxFiles?: DropzoneOptions["maxFiles"];
+  onRemove?: (file: File) => void;
+};
+
+const renderBytes = (bytes: number) => {
+  const units = ["B", "KB", "MB", "GB", "TB", "PB"];
+  let size = bytes;
+  let unitIndex = 0;
+
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex++;
+  }
+
+  return `${size.toFixed(2)} ${units[unitIndex]}`;
+};
+
+const getAcceptedTypesLabel = (accept?: DropzoneOptions["accept"]) => {
+  if (!accept) return "Files";
+
+  // Check if accept is array or object
+  const types = Array.isArray(accept) ? accept : Object.keys(accept);
+
+  const labels: string[] = [];
+
+  if (types.some((t) => t.includes("pdf"))) labels.push("PDF");
+  if (types.some((t) => t.includes("word") || t.includes("document") || t.includes("msword")))
+    labels.push("DOCX");
+  if (types.some((t) => t.includes("image"))) labels.push("Image");
+  if (types.some((t) => t.includes("video"))) labels.push("Video");
+  if (types.some((t) => t.includes("audio"))) labels.push("Audio");
+
+  if (labels.length === 0) return "Supported files";
+
+  if (labels.length === 1) return labels[0];
+
+  // Join with commas and add 'and' before the last item
+  const last = labels.pop();
+  return `${labels.join(", ")} and ${last}`;
+};
+
+const DropzoneContext = createContext<DropzoneContextType | undefined>(undefined);
+
+export type DropzoneProps = Omit<DropzoneOptions, "onDrop"> & {
+  src?: File[];
+  className?: string;
+  onDrop?: (acceptedFiles: File[], fileRejections: FileRejection[], event: DropEvent) => void;
+  onRemove?: (file: File) => void;
+  children?: ReactNode;
+};
+
+export const Dropzone = ({
+  accept,
+  maxFiles = 1,
+  maxSize,
+  minSize,
+  onDrop,
+  onError,
+  disabled,
+  src,
+  onRemove,
+  className,
+  children,
+  contentClassName,
+  ...props
+}: DropzoneProps & { contentClassName?: string }) => {
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept,
+    maxFiles,
+    maxSize,
+    minSize,
+    onError,
+    disabled,
+    onDrop: (acceptedFiles, fileRejections, event) => {
+      if (fileRejections.length > 0) {
+        const rejection = fileRejections[0];
+        const error = rejection.errors[0];
+        let message = error.message;
+
+        if (error.code === "file-too-large" && maxSize) {
+          message = `File is too large. Max size is ${renderBytes(maxSize)}`;
+        } else if (error.code === "file-invalid-type") {
+          const typesLabel = getAcceptedTypesLabel(accept);
+          message = `Invalid file type. Only ${typesLabel} are allowed.`;
+        }
+
+        onError?.(new Error(message));
+        return;
+      }
+
+      onDrop?.(acceptedFiles, fileRejections, event);
+    },
+    ...props,
+  });
+
+  return (
+    <DropzoneContext.Provider
+      key={JSON.stringify(src)}
+      value={{ src, accept, maxSize, minSize, maxFiles, onRemove }}
+    >
+      <div
+        className={cn(
+          "relative flex w-full flex-col overflow-hidden rounded-xl border-2 border-dashed transition-all duration-300",
+          isDragActive
+            ? "scale-[1.01] border-(--theme-teal-400) bg-(--theme-teal-50)"
+            : "border-(--theme-blue-200) bg-(--theme-blue-50)/30 hover:border-(--theme-blue-400) hover:bg-(--theme-blue-50)/60",
+          disabled && "cursor-not-allowed opacity-50 hover:bg-transparent",
+          (!src || src.length === 0) && "cursor-pointer",
+          className
+        )}
+        {...getRootProps()}
+      >
+        <input {...getInputProps()} disabled={disabled} />
+        <div
+          className={cn(
+            "flex flex-col items-center justify-center p-8 text-center",
+            contentClassName
+          )}
+        >
+          {children}
+        </div>
+      </div>
+    </DropzoneContext.Provider>
+  );
+};
+
+const useDropzoneContext = () => {
+  const context = useContext(DropzoneContext);
+
+  if (!context) {
+    throw new Error("useDropzoneContext must be used within a Dropzone");
+  }
+
+  return context;
+};
+
+export type DropzoneContentProps = {
+  children?: ReactNode;
+  className?: string;
+};
+
+export const DropzoneContent = ({ children, className }: DropzoneContentProps) => {
+  const { src, onRemove } = useDropzoneContext();
+
+  if (!src || src.length === 0) {
+    return null;
+  }
+
+  if (children) {
+    return children;
+  }
+
+  return (
+    <div className={cn("flex w-full flex-col gap-3", className)}>
+      {src.map((file, index) => (
+        <div
+          key={index}
+          onClick={(e) => e.stopPropagation()} // Prevent opening file dialog when clicking on file card
+          className="relative flex items-center gap-3 rounded-lg border border-(--theme-blue-200) bg-white p-3 shadow-sm transition-all hover:border-(--theme-blue-300) hover:shadow-md"
+        >
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-(--theme-blue-50)">
+            <FileText className="h-5 w-5 text-(--theme-blue-500)" />
+          </div>
+
+          <div className="flex flex-1 flex-col overflow-hidden text-left">
+            <p className="truncate text-sm font-medium text-(--theme-navy-700)">{file.name}</p>
+            <p className="text-xs text-(--theme-blue-400)">{renderBytes(file.size)}</p>
+          </div>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 cursor-pointer rounded-lg p-0 text-red-400 opacity-70 hover:bg-red-50 hover:text-red-600 hover:opacity-100"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove?.(file);
+            }}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      ))}
+
+      {/* Change File Button */}
+      <Button
+        type="button"
+        variant="outline"
+        className="mt-2 h-9 cursor-pointer self-center border-(--theme-blue-200) text-xs font-medium text-(--theme-navy-600)"
+      >
+        Replace File
+      </Button>
+    </div>
+  );
+};
+
+export type DropzoneEmptyStateProps = {
+  children?: ReactNode;
+  className?: string;
+};
+
+export const DropzoneEmptyState = ({ children, className }: DropzoneEmptyStateProps) => {
+  const { src, accept, maxSize } = useDropzoneContext();
+
+  if (src && src.length > 0) {
+    return null;
+  }
+
+  if (children) {
+    return children;
+  }
+
+  const getSizeLabel = () => {
+    if (!maxSize) return "";
+    return `(Max ${renderBytes(maxSize)})`;
+  };
+
+  return (
+    <div className={cn("flex flex-col items-center justify-center gap-2", className)}>
+      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-(--theme-blue-100) transition-transform duration-300 group-hover:scale-110">
+        <CloudUpload className="h-6 w-6 text-(--theme-blue-600)" />
+      </div>
+      <div className="mt-2 space-y-1">
+        <p className="xs:text-base text-sm font-semibold text-(--theme-navy-700)">
+          <span className="text-(--theme-teal-600) hover:underline">Click to upload</span> or drag
+          and drop
+        </p>
+        <p className="xs:text-sm text-xs text-(--theme-blue-500)">
+          {getAcceptedTypesLabel(accept)} {getSizeLabel()}
+        </p>
+      </div>
+    </div>
+  );
+};
