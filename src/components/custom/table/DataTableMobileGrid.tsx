@@ -25,13 +25,13 @@ export function DataTableMobileGrid<TData>({ table }: DataTableMobileGridProps<T
 
   if (!rows.length) {
     return (
-      <div className="flex items-center justify-center rounded-xl border border-dashed border-(--theme-blue-200) bg-white/50 p-12">
+      <div className="flex items-center justify-center rounded-xl border border-dashed border-(--theme-coffee-200) bg-white/50 p-12">
         <div className="text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-(--theme-mint-100)">
-            <MoreVertical className="h-6 w-6 text-(--theme-blue-400)" />
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-(--theme-cream-100)">
+            <MoreVertical className="h-6 w-6 text-(--theme-coffee-400)" />
           </div>
-          <p className="text-sm font-medium text-(--theme-navy-700)">No results found</p>
-          <p className="mt-1 text-xs text-(--theme-navy-400)">
+          <p className="text-sm font-medium text-(--theme-burgundy-700)">No results found</p>
+          <p className="mt-1 text-xs text-(--theme-burgundy-400)">
             Try adjusting your filters or search criteria
           </p>
         </div>
@@ -65,16 +65,16 @@ export function DataTableMobileGrid<TData>({ table }: DataTableMobileGridProps<T
             key={row.id}
             className={cn(
               "group relative overflow-hidden rounded-xl border bg-white transition-all duration-200",
-              "border-(--theme-blue-100) hover:border-(--theme-teal-300)",
+              "border-(--theme-coffee-100) hover:border-(--theme-taupe-300)",
               "shadow-sm hover:shadow-md"
             )}
           >
             {/* Card Header - Primary Column */}
-            <div className="flex items-start justify-between gap-3 border-b border-(--theme-blue-50) bg-linear-to-r from-(--theme-mint-50) to-white p-3.5">
+            <div className="flex items-start justify-between gap-3 border-b border-(--theme-coffee-50) bg-linear-to-r from-(--theme-cream-50) to-white p-3.5">
               <div className="min-w-0 flex-1">
                 {/* Primary Column Label */}
                 {primaryHeader && (
-                  <p className="mb-1 text-[10px] font-semibold tracking-wider text-(--theme-blue-400) uppercase">
+                  <p className="mb-1 text-[10px] font-semibold tracking-wider text-(--theme-coffee-400) uppercase">
                     {typeof primaryHeader.column.columnDef.header === "function"
                       ? (() => {
                           // Extract title from the header component if possible
@@ -99,7 +99,7 @@ export function DataTableMobileGrid<TData>({ table }: DataTableMobileGridProps<T
                 )}
                 {/* Primary Column Value */}
                 {primaryCell && (
-                  <div className="text-sm font-medium text-(--theme-navy-900)">
+                  <div className="text-sm font-medium text-(--theme-burgundy-900)">
                     {flexRender(primaryCell.column.columnDef.cell, primaryCell.getContext())}
                   </div>
                 )}
@@ -141,10 +141,10 @@ export function DataTableMobileGrid<TData>({ table }: DataTableMobileGridProps<T
                         : "items-start"
                     )}
                   >
-                    <span className="shrink-0 text-xs font-medium text-(--theme-navy-400)">
+                    <span className="shrink-0 text-xs font-medium text-(--theme-burgundy-400)">
                       {headerLabel}
                     </span>
-                    <div className="min-w-0 text-sm text-(--theme-navy-700)">
+                    <div className="min-w-0 text-sm text-(--theme-burgundy-700)">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </div>
                   </div>
@@ -154,14 +154,14 @@ export function DataTableMobileGrid<TData>({ table }: DataTableMobileGridProps<T
 
             {/* Action Footer */}
             {actionCell && (
-              <div className="flex items-center justify-center border-t border-(--theme-blue-50) bg-slate-50/50 p-3">
+              <div className="flex items-center justify-center border-t border-(--theme-coffee-50) bg-slate-50/50 p-3">
                 {flexRender(actionCell.column.columnDef.cell, actionCell.getContext())}
               </div>
             )}
 
             {/* Selection indicator glow effect */}
             {row.getIsSelected() && (
-              <div className="pointer-events-none absolute inset-0 rounded-xl ring-2 ring-(--theme-teal-400)" />
+              <div className="pointer-events-none absolute inset-0 rounded-xl ring-2 ring-(--theme-taupe-400)" />
             )}
           </div>
         );

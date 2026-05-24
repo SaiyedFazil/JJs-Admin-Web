@@ -1,18 +1,24 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
-import { AdminLayoutClient } from "@/components/pages/layout/AdminLayoutClient";
+import { LayoutClient } from "@/components/pages/layout/LayoutClient";
+
+import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
   title: "JJ's Kitchen Admin",
   description: "JJ's Kitchen Admin Dashboard",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const cookieStore = await cookies();
+  const sidebarCookie = cookieStore.get("sidebar_state");
+  const defaultOpen = sidebarCookie?.value !== "false";
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <AdminLayoutClient>{children}</AdminLayoutClient>
+        <LayoutClient defaultOpen={defaultOpen}>{children}</LayoutClient>
       </body>
     </html>
   );

@@ -142,9 +142,9 @@ export function DataTablePagination<TData>({
       <div className="flex flex-col gap-3 lg:hidden">
         {/* Row 1: Entries count on left, Rows per page on right */}
         <div className="flex items-center justify-between">
-          <div className="text-xs text-(--theme-navy-600)">{showingText}</div>
+          <div className="text-xs text-(--theme-burgundy-600)">{showingText}</div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-(--theme-navy-500)">Rows</span>
+            <span className="text-xs text-(--theme-burgundy-500)">Rows</span>
             <Select
               value={`${pageSize}`}
               onValueChange={(value) => {
@@ -185,7 +185,7 @@ export function DataTablePagination<TData>({
             <span className="sr-only">Go to previous page</span>
             <ChevronLeft className="h-3.5 w-3.5" />
           </Button>
-          <div className="flex min-w-[80px] items-center justify-center px-2 text-xs font-medium text-(--theme-navy-700)">
+          <div className="flex min-w-[80px] items-center justify-center px-2 text-xs font-medium text-(--theme-burgundy-700)">
             Page {pageIndex + 1} of {table.getPageCount()}
           </div>
           <Button

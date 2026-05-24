@@ -117,8 +117,8 @@ export const Dropzone = ({
         className={cn(
           "relative flex w-full flex-col overflow-hidden rounded-xl border-2 border-dashed transition-all duration-300",
           isDragActive
-            ? "scale-[1.01] border-(--theme-teal-400) bg-(--theme-teal-50)"
-            : "border-(--theme-blue-200) bg-(--theme-blue-50)/30 hover:border-(--theme-blue-400) hover:bg-(--theme-blue-50)/60",
+            ? "scale-[1.01] border-(--theme-taupe-400) bg-(--theme-taupe-50)"
+            : "border-(--theme-coffee-200) bg-(--theme-coffee-50)/30 hover:border-(--theme-coffee-400) hover:bg-(--theme-coffee-50)/60",
           disabled && "cursor-not-allowed opacity-50 hover:bg-transparent",
           (!src || src.length === 0) && "cursor-pointer",
           className
@@ -171,15 +171,15 @@ export const DropzoneContent = ({ children, className }: DropzoneContentProps) =
         <div
           key={index}
           onClick={(e) => e.stopPropagation()} // Prevent opening file dialog when clicking on file card
-          className="relative flex items-center gap-3 rounded-lg border border-(--theme-blue-200) bg-white p-3 shadow-sm transition-all hover:border-(--theme-blue-300) hover:shadow-md"
+          className="relative flex items-center gap-3 rounded-lg border border-(--theme-coffee-200) bg-white p-3 shadow-sm transition-all hover:border-(--theme-coffee-300) hover:shadow-md"
         >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-(--theme-blue-50)">
-            <FileText className="h-5 w-5 text-(--theme-blue-500)" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-(--theme-coffee-50)">
+            <FileText className="h-5 w-5 text-(--theme-coffee-500)" />
           </div>
 
           <div className="flex flex-1 flex-col overflow-hidden text-left">
-            <p className="truncate text-sm font-medium text-(--theme-navy-700)">{file.name}</p>
-            <p className="text-xs text-(--theme-blue-400)">{renderBytes(file.size)}</p>
+            <p className="truncate text-sm font-medium text-(--theme-burgundy-700)">{file.name}</p>
+            <p className="text-xs text-(--theme-coffee-400)">{renderBytes(file.size)}</p>
           </div>
 
           <Button
@@ -201,7 +201,7 @@ export const DropzoneContent = ({ children, className }: DropzoneContentProps) =
       <Button
         type="button"
         variant="outline"
-        className="mt-2 h-9 cursor-pointer self-center border-(--theme-blue-200) text-xs font-medium text-(--theme-navy-600)"
+        className="mt-2 h-9 cursor-pointer self-center border-(--theme-coffee-200) text-xs font-medium text-(--theme-burgundy-600)"
       >
         Replace File
       </Button>
@@ -232,15 +232,15 @@ export const DropzoneEmptyState = ({ children, className }: DropzoneEmptyStatePr
 
   return (
     <div className={cn("flex flex-col items-center justify-center gap-2", className)}>
-      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-(--theme-blue-100) transition-transform duration-300 group-hover:scale-110">
-        <CloudUpload className="h-6 w-6 text-(--theme-blue-600)" />
+      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-(--theme-coffee-100) transition-transform duration-300 group-hover:scale-110">
+        <CloudUpload className="h-6 w-6 text-(--theme-coffee-600)" />
       </div>
       <div className="mt-2 space-y-1">
-        <p className="xs:text-base text-sm font-semibold text-(--theme-navy-700)">
-          <span className="text-(--theme-teal-600) hover:underline">Click to upload</span> or drag
+        <p className="xs:text-base text-sm font-semibold text-(--theme-burgundy-700)">
+          <span className="text-(--theme-taupe-600) hover:underline">Click to upload</span> or drag
           and drop
         </p>
-        <p className="xs:text-sm text-xs text-(--theme-blue-500)">
+        <p className="xs:text-sm text-xs text-(--theme-coffee-500)">
           {getAcceptedTypesLabel(accept)} {getSizeLabel()}
         </p>
       </div>

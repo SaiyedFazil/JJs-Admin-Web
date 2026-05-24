@@ -14,13 +14,13 @@ export function PageLoader({ className, loadingMessage = "Loading..." }: PageLoa
   return (
     <div
       className={cn(
-        "flex min-h-screen items-center justify-center bg-(--theme-mint-50)",
+        "flex min-h-screen items-center justify-center bg-(--theme-cream-50)",
         className
       )}
     >
       <div className="flex flex-col items-center">
-        <Spinner variant="circle-filled" size={80} className="text-(--theme-navy)" />
-        <p className="mt-2 text-sm text-(--theme-blue-600)">{loadingMessage}</p>
+        <Spinner variant="circle-filled" size={80} className="text-(--theme-burgundy)" />
+        <p className="mt-2 text-sm text-(--theme-coffee-600)">{loadingMessage}</p>
       </div>
     </div>
   );

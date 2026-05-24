@@ -24,7 +24,7 @@ export default function Error({ error, reset }: ErrorProps) {
     <div className="flex min-h-[90vh] flex-col items-center justify-center p-6 text-center">
       <div className="animate-in fade-in zoom-in mb-6 flex flex-col items-center duration-500">
         <div className="relative mb-4">
-          <Spinner variant="circle-filled" size={140} className="text-(--theme-navy)" />
+          <Spinner variant="circle-filled" size={140} className="text-(--theme-burgundy)" />
           <div className="absolute -right-2 -bottom-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-100 ring-4 ring-white">
             <AlertCircle className="h-5 w-5 text-red-600" />
           </div>
@@ -50,7 +50,7 @@ export default function Error({ error, reset }: ErrorProps) {
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button
           onClick={() => reset()}
-          className="cursor-pointer gap-2 bg-(--theme-teal) font-semibold text-(--theme-navy-900) hover:bg-(--theme-teal-500)"
+          className="cursor-pointer gap-2 bg-(--theme-taupe) font-semibold text-(--theme-burgundy-900) hover:bg-(--theme-taupe-500)"
           size="lg"
         >
           <RefreshCcw className="h-4 w-4" />

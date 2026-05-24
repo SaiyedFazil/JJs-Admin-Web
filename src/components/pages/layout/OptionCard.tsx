@@ -35,7 +35,7 @@ export function OptionCard({
     <div
       onClick={onClick}
       className={cn(
-        "group relative flex cursor-pointer flex-col gap-4 rounded-xl border border-(--theme-navy-100) bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-(--theme-teal)/30 hover:shadow-md",
+        "group relative flex cursor-pointer flex-col gap-4 rounded-xl border border-(--theme-burgundy-100) bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-(--theme-taupe)/30 hover:shadow-md",
         className
       )}
     >
@@ -48,10 +48,10 @@ export function OptionCard({
         <Icon className="h-6 w-6" />
       </div>
       <div className="space-y-2 text-left">
-        <h3 className="text-lg font-bold text-(--theme-navy-900) transition-colors group-hover:text-(--theme-teal)">
+        <h3 className="text-lg font-bold text-(--theme-burgundy-900) transition-colors group-hover:text-(--theme-taupe)">
           {title}
         </h3>
-        <p className="text-sm leading-relaxed text-(--theme-navy-500)">{description}</p>
+        <p className="text-sm leading-relaxed text-(--theme-burgundy-500)">{description}</p>
       </div>
     </div>
   );

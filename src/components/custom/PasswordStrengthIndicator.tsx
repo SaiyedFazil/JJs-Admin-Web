@@ -52,8 +52,8 @@ export function PasswordStrengthIndicator({
       return {
         label: "",
         value: 0,
-        colorClass: "text-(--theme-blue-400)",
-        barColor: "var(--theme-blue-200)",
+        colorClass: "text-(--theme-coffee-400)",
+        barColor: "var(--theme-coffee-200)",
       };
     }
 
@@ -83,15 +83,15 @@ export function PasswordStrengthIndicator({
       return {
         label: "Good",
         value: 75,
-        colorClass: "text-(--theme-blue)",
-        barColor: "var(--theme-blue)", // theme blue
+        colorClass: "text-(--theme-coffee)",
+        barColor: "var(--theme-coffee)", // theme blue
       };
     } else {
       return {
         label: "Strong",
         value: 100,
-        colorClass: "text-(--theme-teal-500)",
-        barColor: "var(--theme-teal-500)", // theme teal
+        colorClass: "text-(--theme-taupe-500)",
+        barColor: "var(--theme-taupe-500)", // theme teal
       };
     }
   };
@@ -104,7 +104,7 @@ export function PasswordStrengthIndicator({
       {showIndicator && (
         <motion.div
           className={cn(
-            "shadow-theme-xl rounded-lg border border-(--theme-teal-200) bg-white p-3 sm:p-4",
+            "shadow-theme-xl rounded-lg border border-(--theme-taupe-200) bg-white p-3 sm:p-4",
             // Mobile/Tablet (below xl): relative positioning, below the input
             "relative z-40 mt-3 w-full",
             // Desktop xl+: absolute positioning, to the right of input
@@ -118,10 +118,10 @@ export function PasswordStrengthIndicator({
           transition={{ duration: 0.2 }}
         >
           {/* Arrow pointing to input - only show on xl+ desktop */}
-          <div className="absolute top-1/2 left-0 -ml-2 hidden h-4 w-4 -translate-y-1/2 rotate-315 border-t border-l border-(--theme-teal-200) bg-white xl:block" />
+          <div className="absolute top-1/2 left-0 -ml-2 hidden h-4 w-4 -translate-y-1/2 rotate-315 border-t border-l border-(--theme-taupe-200) bg-white xl:block" />
 
           {/* Title */}
-          <h4 className="mb-3 text-sm font-semibold text-(--theme-navy-800)">
+          <h4 className="mb-3 text-sm font-semibold text-(--theme-burgundy-800)">
             Password must have:
           </h4>
 
@@ -138,12 +138,12 @@ export function PasswordStrengthIndicator({
                   transition={{ delay: index * 0.05 }}
                 >
                   {isMet ? (
-                    <Check className="h-3.5 w-3.5 text-(--theme-teal-500)" />
+                    <Check className="h-3.5 w-3.5 text-(--theme-taupe-500)" />
                   ) : (
-                    <X className="h-3.5 w-3.5 text-(--theme-blue-400)" />
+                    <X className="h-3.5 w-3.5 text-(--theme-coffee-400)" />
                   )}
                   <span
-                    className={cn(isMet ? "text-(--theme-teal-700)" : "text-(--theme-blue-500)")}
+                    className={cn(isMet ? "text-(--theme-taupe-700)" : "text-(--theme-coffee-500)")}
                   >
                     {requirement.label}
                   </span>
@@ -154,14 +154,14 @@ export function PasswordStrengthIndicator({
 
           {/* Password Strength Indicator */}
           {strength.label && (
-            <div className="border-t border-(--theme-teal-100) pt-3">
+            <div className="border-t border-(--theme-taupe-100) pt-3">
               <div className="mb-2 flex items-center justify-between">
-                <span className="text-xs font-medium text-(--theme-navy-600)">Strength:</span>
+                <span className="text-xs font-medium text-(--theme-burgundy-600)">Strength:</span>
                 <span className={cn("text-xs font-semibold", strength.colorClass)}>
                   {strength.label}
                 </span>
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-(--theme-blue-100)">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-(--theme-coffee-100)">
                 <motion.div
                   className="h-full rounded-full"
                   style={{ backgroundColor: strength.barColor }}

@@ -14,6 +14,7 @@ export interface ApiErrorMessages {
   403?: string;
   404?: string;
   409?: string;
+  422?: string;
   429?: string;
   500?: string;
   default?: string;
@@ -45,6 +46,7 @@ export function handleApiError(error: unknown, customMessages: ApiErrorMessages 
       403: customMessages[403] || serverMessage || "Forbidden",
       404: customMessages[404] || serverMessage || "Resource not found",
       409: customMessages[409] || serverMessage || "Resource already exists",
+      422: customMessages[422] || serverMessage || "Validation error",
       429: customMessages[429] || serverMessage || "Too many requests. Please try again later.",
       500: customMessages[500] || serverMessage || "Internal server error. Please try again later.",
     };

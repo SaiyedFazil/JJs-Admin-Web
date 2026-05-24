@@ -26,7 +26,7 @@ if (typeof window !== "undefined") {
 // (401 is handled by the admin token manager's own interceptor above)
 attachErrorInterceptor(adminAxiosInstance, {
   clearTokens: clearAdminAuthTokens,
-  loginPath: "/admin/login",
+  loginPath: "/login",
 });
 
 export default adminAxiosInstance;

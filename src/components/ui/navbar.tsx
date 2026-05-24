@@ -442,8 +442,8 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
                               "group relative flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg px-6 py-3 text-sm font-medium transition-all duration-200",
                               "focus:ring-0 focus:outline-none",
                               isActive
-                                ? "bg-transparent! text-(--theme-navy-900) hover:bg-transparent!"
-                                : "text-(--theme-navy-500) hover:bg-(--theme-teal-300)! hover:text-(--theme-navy-900)"
+                                ? "bg-transparent! text-(--theme-burgundy-900) hover:bg-transparent!"
+                                : "text-(--theme-burgundy-500) hover:bg-(--theme-taupe-300)! hover:text-(--theme-burgundy-900)"
                             )}
                           >
                             {/* Icon */}
@@ -452,8 +452,8 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
                                 className={cn(
                                   "flex items-center justify-center transition-colors duration-200 [&_svg]:h-5 [&_svg]:w-5",
                                   isActive
-                                    ? "text-(--theme-teal-600)"
-                                    : "text-(--theme-navy-400) group-hover:text-(--theme-teal-500)"
+                                    ? "text-(--theme-taupe-600)"
+                                    : "text-(--theme-burgundy-400) group-hover:text-(--theme-taupe-500)"
                                 )}
                               >
                                 {link.icon}
@@ -465,7 +465,7 @@ export const Navbar05 = React.forwardRef<HTMLElement, Navbar05Props>(
                             </span>
                             {/* Active indicator - bottom border */}
                             {isActive && (
-                              <span className="absolute bottom-0 left-1/2 h-0.5 w-10 -translate-x-1/2 rounded-full bg-(--theme-teal-500)" />
+                              <span className="absolute bottom-0 left-1/2 h-0.5 w-10 -translate-x-1/2 rounded-full bg-(--theme-taupe-500)" />
                             )}
                           </Link>
                         </NavigationMenuLink>

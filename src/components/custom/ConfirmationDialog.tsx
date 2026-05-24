@@ -48,7 +48,7 @@ export function ConfirmationDialog({
       case "warning":
         return "bg-amber-600 hover:bg-amber-700 focus:ring-amber-600";
       default:
-        return "bg-(--theme-teal) text-(--theme-navy-900) hover:bg-(--theme-teal-500)";
+        return "bg-(--theme-taupe) text-(--theme-burgundy-900) hover:bg-(--theme-taupe-500)";
     }
   };
 
@@ -64,18 +64,18 @@ export function ConfirmationDialog({
                   ? "bg-red-50 text-red-600"
                   : variant === "warning"
                     ? "bg-amber-50 text-amber-600"
-                    : "bg-(--theme-teal-50) text-(--theme-teal-600)"
+                    : "bg-(--theme-taupe-50) text-(--theme-taupe-600)"
               )}
             >
               {icon}
             </div>
           )}
-          <AlertDialogTitle className="text-center text-2xl font-bold text-(--theme-navy-900) sm:text-xl">
+          <AlertDialogTitle className="text-center text-2xl font-bold text-(--theme-burgundy-900) sm:text-xl">
             {title}
           </AlertDialogTitle>
           <AlertDialogDescription
             asChild
-            className="text-center text-sm leading-relaxed text-(--theme-navy-500)"
+            className="text-center text-sm leading-relaxed text-(--theme-burgundy-500)"
           >
             <div className="mt-1">{description}</div>
           </AlertDialogDescription>
@@ -84,7 +84,7 @@ export function ConfirmationDialog({
           <AlertDialogCancel
             disabled={isLoading}
             onClick={onClose}
-            className="w-full cursor-pointer rounded-xl py-5 hover:bg-(--theme-navy-50) sm:flex-1 sm:rounded-lg sm:py-2"
+            className="w-full cursor-pointer rounded-xl py-5 hover:bg-(--theme-burgundy-50) sm:flex-1 sm:rounded-lg sm:py-2"
           >
             Cancel
           </AlertDialogCancel>

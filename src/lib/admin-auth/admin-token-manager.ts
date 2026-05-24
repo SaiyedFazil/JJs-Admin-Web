@@ -7,16 +7,40 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { processQueue as processQueueItems, type QueueItem } from "@/lib/auth-shared/token-utils";
 
-// Single localStorage key for all admin auth data (grouped storage)
-const ADMIN_AUTH_DATA_KEY = "adminAuthData";
+// Cookie helper: Set a cookie
+function setAdminCookie(name: string, value: string, days = 30): void {
+  if (typeof document === "undefined") return;
+  let expires = "";
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    expires = "; expires=" + date.toUTCString();
+  }
+  const isSecure = window.location.protocol === "https:";
+  const secureFlag = isSecure ? "; Secure" : "";
+  document.cookie = `${name}=${encodeURIComponent(value)}${expires}; path=/; SameSite=Lax${secureFlag}`;
+}
 
-// Type definition for the admin auth data stored in localStorage
-interface AdminAuthData {
-  accessToken: string;
-  refreshToken: string;
-  role: "ADMIN" | "SUPER_ADMIN";
-  email: string;
-  name: string;
+// Cookie helper: Get a cookie
+function getAdminCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const nameEQ = `${name}=`;
+  const ca = document.cookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    const c = ca[i].trim();
+    if (c.indexOf(nameEQ) === 0) {
+      return decodeURIComponent(c.substring(nameEQ.length));
+    }
+  }
+  return null;
+}
+
+// Cookie helper: Delete a cookie
+function deleteAdminCookie(name: string): void {
+  if (typeof document === "undefined") return;
+  const isSecure = window.location.protocol === "https:";
+  const secureFlag = isSecure ? "; Secure" : "";
+  document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Lax${secureFlag}`;
 }
 
 // API base URL
@@ -34,117 +58,85 @@ const processAdminQueue = (error: Error | null, token: string | null = null) => 
 };
 
 /**
- * Get the complete admin auth data from localStorage
+ * Store admin authentication tokens in cookies (1 month expiration)
  */
-function getAdminAuthData(): AdminAuthData | null {
-  if (typeof window !== "undefined") {
-    const data = localStorage.getItem(ADMIN_AUTH_DATA_KEY);
-    if (data) {
-      try {
-        return JSON.parse(data) as AdminAuthData;
-      } catch {
-        return null;
-      }
+export function storeAdminAuthTokens(accessToken: string, refreshToken: string): void {
+  setAdminCookie("admin_access_token", accessToken, 30);
+  setAdminCookie("admin_refresh_token", refreshToken, 30);
+}
+
+/**
+ * Get admin access token from cookies
+ */
+export function getAdminAccessToken(): string | null {
+  return getAdminCookie("admin_access_token");
+}
+
+/**
+ * Get admin refresh token from cookies
+ */
+export function getAdminRefreshToken(): string | null {
+  return getAdminCookie("admin_refresh_token");
+}
+
+/**
+ * Clear all admin authentication cookies
+ */
+export function clearAdminAuthTokens(): void {
+  deleteAdminCookie("admin_access_token");
+  deleteAdminCookie("admin_refresh_token");
+  deleteAdminCookie("admin_role");
+  deleteAdminCookie("admin_name");
+  deleteAdminCookie("admin_phone_number");
+}
+
+/**
+ * Store admin role in cookies (1 month expiration)
+ */
+export function storeAdminRole(role: "ADMIN" | "SUPER_ADMIN" | string): void {
+  setAdminCookie("admin_role", role, 30);
+}
+
+/**
+ * Get admin role from cookies
+ */
+export function getAdminRole(): "ADMIN" | "SUPER_ADMIN" | null {
+  const role = getAdminCookie("admin_role");
+  if (role) {
+    const upperRole = role.toUpperCase();
+    if (upperRole === "ADMIN" || upperRole === "SUPER_ADMIN") {
+      return upperRole;
     }
   }
   return null;
 }
 
 /**
- * Store admin auth data in localStorage as a single grouped object
- */
-function setAdminAuthData(data: Partial<AdminAuthData>): void {
-  if (typeof window !== "undefined") {
-    const existingData = getAdminAuthData() || {
-      accessToken: "",
-      refreshToken: "",
-      role: "ADMIN" as const,
-      email: "",
-      name: "",
-    };
-    const newData = { ...existingData, ...data };
-    localStorage.setItem(ADMIN_AUTH_DATA_KEY, JSON.stringify(newData));
-  }
-}
-
-/**
- * Store admin authentication tokens in localStorage
- */
-export function storeAdminAuthTokens(accessToken: string, refreshToken: string): void {
-  setAdminAuthData({ accessToken, refreshToken });
-}
-
-/**
- * Get admin access token from localStorage
- */
-export function getAdminAccessToken(): string | null {
-  const data = getAdminAuthData();
-  return data?.accessToken || null;
-}
-
-/**
- * Get admin refresh token from localStorage
- */
-export function getAdminRefreshToken(): string | null {
-  const data = getAdminAuthData();
-  return data?.refreshToken || null;
-}
-
-/**
- * Clear all admin authentication data from localStorage
- */
-export function clearAdminAuthTokens(): void {
-  if (typeof window !== "undefined") {
-    localStorage.removeItem(ADMIN_AUTH_DATA_KEY);
-  }
-}
-
-/**
- * Store admin role in localStorage
- */
-export function storeAdminRole(role: "ADMIN" | "SUPER_ADMIN"): void {
-  setAdminAuthData({ role });
-}
-
-/**
- * Get admin role from localStorage
- */
-export function getAdminRole(): "ADMIN" | "SUPER_ADMIN" | null {
-  const data = getAdminAuthData();
-  if (data?.role === "ADMIN" || data?.role === "SUPER_ADMIN") {
-    return data.role;
-  }
-  return null;
-}
-
-/**
- * Store admin email in localStorage
- */
-export function storeAdminEmail(email: string): void {
-  setAdminAuthData({ email });
-}
-
-/**
- * Get admin email from localStorage
- */
-export function getAdminEmail(): string | null {
-  const data = getAdminAuthData();
-  return data?.email || null;
-}
-
-/**
- * Store admin name in localStorage
+ * Store admin name in cookies (1 month expiration)
  */
 export function storeAdminName(name: string): void {
-  setAdminAuthData({ name });
+  setAdminCookie("admin_name", name, 30);
 }
 
 /**
- * Get admin name from localStorage
+ * Get admin name from cookies
  */
 export function getAdminName(): string | null {
-  const data = getAdminAuthData();
-  return data?.name || null;
+  return getAdminCookie("admin_name");
+}
+
+/**
+ * Store admin phone number in cookies (1 month expiration)
+ */
+export function storeAdminPhoneNumber(phoneNumber: string): void {
+  setAdminCookie("admin_phone_number", phoneNumber, 30);
+}
+
+/**
+ * Get admin phone number from cookies
+ */
+export function getAdminPhoneNumber(): string | null {
+  return getAdminCookie("admin_phone_number");
 }
 
 /**
@@ -212,7 +204,7 @@ export async function refreshAdminAuthTokens(): Promise<{
  */
 export function setupAdminAxiosInterceptors(axiosInstance: ReturnType<typeof axios.create>): void {
   // List of public endpoints that don't require authentication
-  const PUBLIC_ENDPOINTS = ["/auth/admin/login"];
+  const PUBLIC_ENDPOINTS = ["/auth/admin/login", "/admin/login"];
 
   /**
    * Check if the request URL is a public endpoint
@@ -297,7 +289,7 @@ export function setupAdminAxiosInterceptors(axiosInstance: ReturnType<typeof axi
 
             // Redirect to admin login if in browser
             if (typeof window !== "undefined") {
-              window.location.href = "/admin/login";
+              window.location.href = "/login";
             }
 
             return Promise.reject(error);
@@ -307,7 +299,7 @@ export function setupAdminAxiosInterceptors(axiosInstance: ReturnType<typeof axi
           clearAdminAuthTokens();
 
           if (typeof window !== "undefined") {
-            window.location.href = "/admin/login";
+            window.location.href = "/login";
           }
 
           return Promise.reject(refreshError);
@@ -320,7 +312,7 @@ export function setupAdminAxiosInterceptors(axiosInstance: ReturnType<typeof axi
       if (error.response?.status === 403) {
         clearAdminAuthTokens();
         if (typeof window !== "undefined") {
-          window.location.href = "/admin/login";
+          window.location.href = "/login";
         }
       }
 
@@ -335,6 +327,6 @@ export function setupAdminAxiosInterceptors(axiosInstance: ReturnType<typeof axi
 export function adminLogout(): void {
   clearAdminAuthTokens();
   if (typeof window !== "undefined") {
-    window.location.href = "/admin/login";
+    window.location.href = "/login";
   }
 }

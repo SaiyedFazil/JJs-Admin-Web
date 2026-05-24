@@ -67,23 +67,23 @@ export function useBreadcrumb() {
 }
 
 // --- Breadcrumb Display Component ---
-export function AdminBreadcrumb() {
+export function Breadcrumb() {
   const { breadcrumbs } = useBreadcrumb();
 
   if (breadcrumbs.length === 0) return null;
 
   return (
-    <nav className="flex items-center gap-2 text-sm text-(--theme-navy-600)">
+    <nav className="flex items-center gap-2 text-sm text-(--theme-burgundy-600)">
       {breadcrumbs.map((item, index) => {
         const isLast = index === breadcrumbs.length - 1;
         const isFirst = index === 0;
         return (
           <React.Fragment key={index}>
-            {!isFirst && <ChevronRight className="h-4 w-4 text-(--theme-navy-300)" />}
+            {!isFirst && <ChevronRight className="h-4 w-4 text-(--theme-burgundy-300)" />}
             {item.onClick && !isLast ? (
               <button
                 onClick={item.onClick}
-                className="cursor-pointer transition-colors hover:text-(--theme-teal)"
+                className="cursor-pointer transition-colors hover:text-(--theme-taupe)"
               >
                 {item.label}
               </button>
@@ -91,12 +91,12 @@ export function AdminBreadcrumb() {
               <Link
                 href={item.href}
                 prefetch={false}
-                className="transition-colors hover:text-(--theme-teal)"
+                className="transition-colors hover:text-(--theme-taupe)"
               >
                 {item.label}
               </Link>
             ) : (
-              <span className={isLast ? "font-medium text-(--theme-navy-900)" : ""}>
+              <span className={isLast ? "font-medium text-(--theme-burgundy-900)" : ""}>
                 {item.label}
               </span>
             )}

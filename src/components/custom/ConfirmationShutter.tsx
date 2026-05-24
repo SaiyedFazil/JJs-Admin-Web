@@ -31,11 +31,11 @@ export function ConfirmationShutter({
   confirmText = "Confirm",
   confirmLoadingText = "Processing...",
   icon = <AlertCircle className="h-5 w-5" />,
-  confirmButtonClass = "bg-(--theme-teal-600) hover:bg-(--theme-teal-700)",
-  iconContainerClass = "bg-(--theme-teal-50) text-(--theme-teal-600)",
+  confirmButtonClass = "bg-(--theme-taupe-600) hover:bg-(--theme-taupe-700)",
+  iconContainerClass = "bg-(--theme-taupe-50) text-(--theme-taupe-600)",
   containerClass = "absolute inset-x-0 bottom-0 z-10 flex min-h-full items-center bg-white px-6 py-4 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]",
   contentContainerClass = "flex w-full flex-col items-center justify-between gap-4 sm:flex-row",
-  descriptionClass = "text-sm text-(--theme-navy-500)",
+  descriptionClass = "text-sm text-(--theme-burgundy-500)",
 }: ConfirmationShutterProps) {
   return (
     <AnimatePresence>
@@ -66,7 +66,7 @@ export function ConfirmationShutter({
                 {icon}
               </div>
               <div className="flex flex-col justify-center text-left">
-                <p className="font-semibold text-(--theme-navy-800)">{title}</p>
+                <p className="font-semibold text-(--theme-burgundy-800)">{title}</p>
                 {description && (
                   <div className={cn("hidden text-sm md:block", descriptionClass)}>
                     {description}

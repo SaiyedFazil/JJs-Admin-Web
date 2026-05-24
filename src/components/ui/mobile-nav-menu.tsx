@@ -129,7 +129,7 @@ export function MobileNavMenu({
         <div
           className="relative overflow-hidden px-5 pt-5 pb-4"
           style={{
-            background: "var(--theme-navy)",
+            background: "var(--theme-burgundy)",
           }}
         >
           {/* Decorative circles */}
@@ -152,19 +152,19 @@ export function MobileNavMenu({
                 <AvatarFallback
                   className="text-xs font-bold"
                   style={{
-                    background: "var(--theme-teal)",
-                    color: "var(--theme-navy-900)",
+                    background: "var(--theme-taupe)",
+                    color: "var(--theme-burgundy-900)",
                   }}
                 >
                   {getInitials(userName)}
                 </AvatarFallback>
               </Avatar>
               {/* Online indicator */}
-              {/* <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-(--theme-navy) bg-emerald-400" /> */}
+              {/* <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-(--theme-burgundy) bg-emerald-400" /> */}
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-white">{userName}</p>
-              <p className="text-xs font-medium" style={{ color: "var(--theme-teal-300)" }}>
+              <p className="text-xs font-medium" style={{ color: "var(--theme-taupe-300)" }}>
                 {formatRoleDisplay(userRole)}
               </p>
             </div>
@@ -185,7 +185,7 @@ export function MobileNavMenu({
               <div className="mb-2">
                 <p
                   className="mb-1.5 px-3 py-1 text-[10px] font-bold tracking-[0.12em] uppercase"
-                  style={{ color: "var(--theme-navy-400)" }}
+                  style={{ color: "var(--theme-burgundy-400)" }}
                 >
                   Navigation
                 </p>
@@ -205,16 +205,16 @@ export function MobileNavMenu({
                         prefetch={false}
                         className={cn(
                           "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
-                          isActive ? "shadow-sm" : "hover:bg-(--theme-navy-50)"
+                          isActive ? "shadow-sm" : "hover:bg-(--theme-burgundy-50)"
                         )}
                         style={
                           isActive
                             ? {
-                                background: "var(--theme-teal-50)",
-                                color: "var(--theme-navy-900)",
+                                background: "var(--theme-taupe-50)",
+                                color: "var(--theme-burgundy-900)",
                               }
                             : {
-                                color: "var(--theme-navy-600)",
+                                color: "var(--theme-burgundy-600)",
                               }
                         }
                       >
@@ -222,7 +222,7 @@ export function MobileNavMenu({
                         {isActive && (
                           <span
                             className="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r-full"
-                            style={{ background: "var(--theme-teal-500)" }}
+                            style={{ background: "var(--theme-taupe-500)" }}
                           />
                         )}
                         {link.icon && (
@@ -234,12 +234,12 @@ export function MobileNavMenu({
                             style={
                               isActive
                                 ? {
-                                    background: "var(--theme-teal-100)",
-                                    color: "var(--theme-teal-700)",
+                                    background: "var(--theme-taupe-100)",
+                                    color: "var(--theme-taupe-700)",
                                   }
                                 : {
-                                    background: "var(--theme-navy-50)",
-                                    color: "var(--theme-navy-400)",
+                                    background: "var(--theme-burgundy-50)",
+                                    color: "var(--theme-burgundy-400)",
                                   }
                             }
                           >
@@ -250,7 +250,7 @@ export function MobileNavMenu({
                         {isActive && (
                           <span
                             className="h-1.5 w-1.5 rounded-full"
-                            style={{ background: "var(--theme-teal-500)" }}
+                            style={{ background: "var(--theme-taupe-500)" }}
                           />
                         )}
                       </Link>
@@ -262,16 +262,16 @@ export function MobileNavMenu({
                     onClick={() => handleUserAction("settings")}
                     className={cn(
                       "group relative flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
-                      isSettingsActive ? "shadow-sm" : "hover:bg-(--theme-navy-50)"
+                      isSettingsActive ? "shadow-sm" : "hover:bg-(--theme-burgundy-50)"
                     )}
                     style={
                       isSettingsActive
                         ? {
-                            background: "var(--theme-teal-50)",
-                            color: "var(--theme-navy-900)",
+                            background: "var(--theme-taupe-50)",
+                            color: "var(--theme-burgundy-900)",
                           }
                         : {
-                            color: "var(--theme-navy-600)",
+                            color: "var(--theme-burgundy-600)",
                           }
                     }
                   >
@@ -279,7 +279,7 @@ export function MobileNavMenu({
                     {isSettingsActive && (
                       <span
                         className="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r-full"
-                        style={{ background: "var(--theme-teal-500)" }}
+                        style={{ background: "var(--theme-taupe-500)" }}
                       />
                     )}
                     <span
@@ -290,12 +290,12 @@ export function MobileNavMenu({
                       style={
                         isSettingsActive
                           ? {
-                              background: "var(--theme-teal-100)",
-                              color: "var(--theme-teal-700)",
+                              background: "var(--theme-taupe-100)",
+                              color: "var(--theme-taupe-700)",
                             }
                           : {
-                              background: "var(--theme-navy-50)",
-                              color: "var(--theme-navy-400)",
+                              background: "var(--theme-burgundy-50)",
+                              color: "var(--theme-burgundy-400)",
                             }
                       }
                     >
@@ -305,7 +305,7 @@ export function MobileNavMenu({
                     {isSettingsActive && (
                       <span
                         className="h-1.5 w-1.5 rounded-full"
-                        style={{ background: "var(--theme-teal-500)" }}
+                        style={{ background: "var(--theme-taupe-500)" }}
                       />
                     )}
                   </button>
@@ -314,18 +314,21 @@ export function MobileNavMenu({
             </div>
 
             {/* ───── Footer (Help & Support + Log Out) ───── */}
-            <div className="border-t px-3 py-3" style={{ borderColor: "var(--theme-navy-100)" }}>
+            <div
+              className="border-t px-3 py-3"
+              style={{ borderColor: "var(--theme-burgundy-100)" }}
+            >
               {/* Help & Support Section */}
               <button
                 onClick={() => setActiveView("help")}
-                className="group relative flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-(--theme-navy-50)"
-                style={{ color: "var(--theme-navy-600)" }}
+                className="group relative flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-(--theme-burgundy-50)"
+                style={{ color: "var(--theme-burgundy-600)" }}
               >
                 <span
                   className="flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-200"
                   style={{
-                    background: "var(--theme-navy-50)",
-                    color: "var(--theme-navy-400)",
+                    background: "var(--theme-burgundy-50)",
+                    color: "var(--theme-burgundy-400)",
                   }}
                 >
                   <HelpCircleIcon className="h-[18px] w-[18px]" />
@@ -363,18 +366,24 @@ export function MobileNavMenu({
             {/* Help header with back button */}
             <div
               className="-pt-2 flex items-center gap-3 border-b px-3 pb-3"
-              style={{ borderColor: "var(--theme-navy-100)" }}
+              style={{ borderColor: "var(--theme-burgundy-100)" }}
             >
               <button
                 onClick={() => setActiveView("main")}
-                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg transition-all duration-200 hover:bg-(--theme-navy-50)"
-                style={{ color: "var(--theme-navy-500)" }}
+                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg transition-all duration-200 hover:bg-(--theme-burgundy-50)"
+                style={{ color: "var(--theme-burgundy-500)" }}
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>
               <div className="flex flex-1 items-center gap-2">
-                <HelpCircleIcon className="h-4 w-4" style={{ color: "var(--theme-navy-500)" }} />
-                <span className="text-sm font-semibold" style={{ color: "var(--theme-navy-900)" }}>
+                <HelpCircleIcon
+                  className="h-4 w-4"
+                  style={{ color: "var(--theme-burgundy-500)" }}
+                />
+                <span
+                  className="text-sm font-semibold"
+                  style={{ color: "var(--theme-burgundy-900)" }}
+                >
                   Help & Support
                 </span>
               </div>
@@ -411,13 +420,13 @@ export function MobileNavMenu({
                 <React.Fragment key={item.key}>
                   <button
                     onClick={() => handleInfoClick(item.key)}
-                    className="group flex w-full cursor-pointer items-start gap-3 px-4 py-3 text-left transition-all duration-200 hover:bg-(--theme-navy-50)"
+                    className="group flex w-full cursor-pointer items-start gap-3 px-4 py-3 text-left transition-all duration-200 hover:bg-(--theme-burgundy-50)"
                   >
                     <div
                       className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
                       style={{
-                        background: "var(--theme-navy-50)",
-                        color: "var(--theme-navy-400)",
+                        background: "var(--theme-burgundy-50)",
+                        color: "var(--theme-burgundy-400)",
                       }}
                     >
                       {item.icon}
@@ -425,31 +434,37 @@ export function MobileNavMenu({
                     <div className="min-w-0 flex-1">
                       <p
                         className="text-sm leading-snug font-semibold"
-                        style={{ color: "var(--theme-navy-900)" }}
+                        style={{ color: "var(--theme-burgundy-900)" }}
                       >
                         {item.label}
                       </p>
-                      <p className="mt-0.5 text-xs" style={{ color: "var(--theme-navy-400)" }}>
+                      <p className="mt-0.5 text-xs" style={{ color: "var(--theme-burgundy-400)" }}>
                         {item.description}
                       </p>
                     </div>
                     <ChevronRight
                       className="mt-1 h-4 w-4 shrink-0 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100"
-                      style={{ color: "var(--theme-navy-300)" }}
+                      style={{ color: "var(--theme-burgundy-300)" }}
                     />
                   </button>
                   {index < arr.length - 1 && (
-                    <div className="mx-4 h-px" style={{ background: "var(--theme-navy-100)" }} />
+                    <div
+                      className="mx-4 h-px"
+                      style={{ background: "var(--theme-burgundy-100)" }}
+                    />
                   )}
                 </React.Fragment>
               ))}
             </div>
 
             {/* Help footer */}
-            <div className="border-t px-4 py-3" style={{ borderColor: "var(--theme-navy-100)" }}>
+            <div
+              className="border-t px-4 py-3"
+              style={{ borderColor: "var(--theme-burgundy-100)" }}
+            >
               <div className="flex items-center gap-2">
-                <Mail className="h-3.5 w-3.5" style={{ color: "var(--theme-navy-400)" }} />
-                <span className="text-[11px]" style={{ color: "var(--theme-navy-400)" }}>
+                <Mail className="h-3.5 w-3.5" style={{ color: "var(--theme-burgundy-400)" }} />
+                <span className="text-[11px]" style={{ color: "var(--theme-burgundy-400)" }}>
                   support@unicon.Work
                 </span>
               </div>

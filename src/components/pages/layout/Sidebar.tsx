@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { adminLogout, getAdminName, getAdminEmail, getAdminRole } from "@/lib/admin-auth";
+import { adminLogout, getAdminName, getAdminRole, getAdminPhoneNumber } from "@/lib/admin-auth";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 
 import {
-  Sidebar,
+  Sidebar as ShadcnSidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
@@ -63,57 +63,69 @@ type NavItem = {
 };
 
 const mainNavItems: NavItem[] = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/admin/dashboard" },
+  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   {
     icon: Users,
     label: "Users Management",
-    href: "/admin/users",
+    href: "/users",
     items: [
-      { label: "Consultants", href: "/admin/users/consultants" },
-      { label: "Clients", href: "/admin/users/clients" },
+      { label: "Consultants", href: "/users/consultants" },
+      { label: "Clients", href: "/users/clients" },
     ],
   },
-  { icon: Briefcase, label: "Job Management", href: "/admin/jobs?status=PUBLISHED" },
-  { icon: UserCog, label: "Onboarding Configuration", href: "/admin/onboarding-configuration" },
+  { icon: Briefcase, label: "Job Management", href: "/jobs?status=PUBLISHED" },
+  { icon: UserCog, label: "Onboarding Configuration", href: "/onboarding-configuration" },
   {
     icon: ShieldCheck,
     label: "Content Verification",
-    href: "/admin/content-verification",
+    href: "/content-verification",
     items: [
-      { label: "Links", href: "/admin/content-verification/links", icon: Link2 },
-      { label: "Certificates", href: "/admin/content-verification/certificates", icon: Award },
+      { label: "Links", href: "/content-verification/links", icon: Link2 },
+      { label: "Certificates", href: "/content-verification/certificates", icon: Award },
     ],
   },
-  { icon: Mail, label: "Email Logs", href: "/admin/email-logs" },
+  { icon: Mail, label: "Email Logs", href: "/email-logs" },
 
   {
     icon: Settings,
     label: "System Settings",
-    href: "/admin/settings",
-    items: [{ label: "Global Variables", href: "/admin/settings/global-variables" }],
+    href: "/settings",
+    items: [{ label: "Global Variables", href: "/settings/global-variables" }],
   },
-  // { icon: BarChart3, label: "Analytics", href: "/admin/analytics" },
+  // { icon: BarChart3, label: "Analytics", href: "/analytics" },
 ];
 
-export function AdminSidebar() {
+export function Sidebar() {
   const pathname = usePathname();
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
 
-  // Admin user info from localStorage
+  // Admin user info from cookies
   const [adminName, setAdminName] = useState<string>("System Admin");
-  const [adminEmail, setAdminEmail] = useState<string>("admin@unicon.com");
+  const [adminPhone, setAdminPhone] = useState<string>("");
   const [adminRole, setAdminRole] = useState<string>("ADMIN");
 
-  // Fetch admin info from localStorage on mount
+  // Fetch admin info from cookies on mount
   useEffect(() => {
     // Wrap in setTimeout to avoid synchronous setState in effect warning
     setTimeout(() => {
       const name = getAdminName();
-      const email = getAdminEmail();
+      const phone = getAdminPhoneNumber();
       const role = getAdminRole();
 
       if (name) setAdminName(name);
-      if (email) setAdminEmail(email);
+      if (phone) {
+        // Format phone number with a space if it lacks one (e.g., +917383375677 -> +91 7383375677)
+        const trimmedPhone = phone.trim();
+        if (trimmedPhone.startsWith("+") && !trimmedPhone.includes(" ")) {
+          if (trimmedPhone.startsWith("+91")) {
+            setAdminPhone(`+91 ${trimmedPhone.slice(3)}`);
+          } else {
+            setAdminPhone(`${trimmedPhone.slice(0, 3)} ${trimmedPhone.slice(3)}`);
+          }
+        } else {
+          setAdminPhone(trimmedPhone);
+        }
+      }
       if (role) setAdminRole(role);
     }, 0);
   }, []);
@@ -169,32 +181,37 @@ export function AdminSidebar() {
   };
 
   return (
-    <Sidebar
+    <ShadcnSidebar
       collapsible="icon"
-      className="border-r border-(--theme-navy-800) bg-(--theme-navy-950) text-(--theme-navy-100)"
+      className="border-r border-(--theme-burgundy-800) bg-(--theme-burgundy-950) text-(--theme-burgundy-100)"
     >
       {/* Sidebar Header */}
-      <SidebarHeader className="h-16 border-b border-(--theme-navy-800)/50">
+      <SidebarHeader className="h-16 border-b border-(--theme-burgundy-800)/50">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
               asChild
-              className="hover:bg-(--theme-navy-900) hover:text-white data-[state=open]:bg-(--theme-navy-900) data-[state=open]:text-white"
+              className="group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:mt-1! group-data-[collapsible=icon]:mr-1! group-data-[collapsible=icon]:size-9! group-data-[collapsible=icon]:justify-center hover:bg-white/10 hover:text-white data-[state=open]:bg-white/10 data-[state=open]:text-white"
             >
-              <Link href="/admin/dashboard" prefetch={false}>
-                <div className="flex aspect-square size-12 items-center justify-center rounded-lg bg-(--theme-teal-100) text-(--theme-navy-900) shadow-(--theme-teal)/20 shadow-lg transition-all group-data-[collapsible=icon]:size-8">
-                  <Image
-                    src="/images/logo/logo-without-bg.webp"
-                    alt="uniCon"
-                    width={44}
-                    height={44}
-                    className="h-full w-full object-contain p-1"
-                  />
-                </div>
+              <Link
+                href="/dashboard"
+                prefetch={false}
+                className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0"
+              >
+                <Image
+                  src="/logo/PNG/JJ_s_Transperent.png"
+                  alt="JJ's Kitchen Logo"
+                  width={200}
+                  height={200}
+                  unoptimized
+                  className="h-9 w-9 object-contain transition-all group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8"
+                  priority
+                />
                 <div className="grid flex-1 text-left text-base leading-tight group-data-[collapsible=icon]:hidden">
                   <span className="truncate font-bold tracking-wide text-white">
-                    uniCon<span className="ml-0.5 font-normal text-(--theme-teal)">Admin</span>
+                    Kitchen
+                    <span className="ml-1 text-xs font-normal text-(--theme-taupe)">Admin</span>
                   </span>
                 </div>
               </Link>
@@ -208,10 +225,10 @@ export function AdminSidebar() {
         {/* Search Bar (Optional, can be hidden in collapsed state usually) */}
         <div className="mb-4 px-2 group-data-[collapsible=icon]:hidden">
           <div className="relative">
-            <Search className="absolute top-2.5 left-2 h-4 w-4 text-(--theme-navy-400)" />
+            <Search className="absolute top-2.5 left-2 h-4 w-4 text-(--theme-burgundy-400)" />
             <SidebarInput
               placeholder="Search..."
-              className="border-(--theme-navy-800) bg-(--theme-navy-900) pl-8 text-(--theme-navy-100) placeholder:text-(--theme-navy-500) focus:border-(--theme-teal) focus:ring-(--theme-teal)/20"
+              className="border-(--theme-burgundy-800) bg-(--theme-burgundy-900) pl-8 text-(--theme-burgundy-100) placeholder:text-(--theme-burgundy-500) focus:border-(--theme-taupe) focus:ring-(--theme-taupe)/20"
             />
           </div>
         </div>
@@ -238,10 +255,10 @@ export function AdminSidebar() {
                       tooltip={item.label}
                       className={`group h-10 transition-all duration-200 ease-in-out ${
                         isActive
-                          ? "rounded-l-none border-l-2 border-(--theme-teal) bg-(--theme-teal)/15 font-medium text-(--theme-teal) shadow-sm group-data-[collapsible=icon]:rounded-lg group-data-[collapsible=icon]:border-l-0 group-data-[collapsible=icon]:text-(--theme-teal)"
+                          ? "rounded-l-none border-l-2 border-(--theme-burgundy-950) bg-(--theme-taupe) font-semibold text-(--theme-burgundy-950) shadow-md group-data-[collapsible=icon]:rounded-lg group-data-[collapsible=icon]:border-l-0"
                           : isChildActive
-                            ? "font-medium text-(--theme-navy-100)"
-                            : "text-(--theme-navy-200) hover:bg-(--theme-navy-800) hover:text-white"
+                            ? "font-medium text-(--theme-burgundy-100) hover:bg-white/10 hover:text-white"
+                            : "text-(--theme-burgundy-200) hover:bg-white/10 hover:text-white"
                       } `}
                     >
                       <Link
@@ -251,14 +268,14 @@ export function AdminSidebar() {
                         className="flex w-full items-center group-data-[collapsible=icon]:justify-center"
                       >
                         <item.icon
-                          className={`${isActive || isChildActive ? "text-(--theme-teal)" : "text-(--theme-navy-400) group-hover:text-(--theme-teal)"} transition-colors`}
+                          className={`${isActive ? "text-(--theme-burgundy-950)" : isChildActive ? "text-(--theme-taupe)" : "text-(--theme-burgundy-400) group-hover:text-(--theme-taupe)"} transition-colors`}
                         />
                         <span className="ml-3 group-data-[collapsible=icon]:hidden">
                           {item.label}
                         </span>
                         {/* Active Indicator Arrow - ONLY if no sub-items */}
                         {isActive && !item.items && (
-                          <ChevronRight className="ml-auto h-4 w-4 text-(--theme-teal) opacity-50 group-data-[collapsible=icon]:hidden" />
+                          <ChevronRight className="ml-auto h-4 w-4 text-(--theme-burgundy-950) opacity-80 group-data-[collapsible=icon]:hidden" />
                         )}
                       </Link>
                     </SidebarMenuButton>
@@ -272,7 +289,7 @@ export function AdminSidebar() {
                           toggleItem(item.href);
                         }}
                         showOnHover={true}
-                        className={`absolute right-2 translate-y-1 cursor-pointer transition-transform duration-200 group-data-[collapsible=icon]:hidden hover:bg-(--theme-navy-800) hover:text-white ${isOpen ? "rotate-90 text-white" : "text-(--theme-navy-400)"}`}
+                        className={`absolute right-2 translate-y-1 cursor-pointer transition-transform duration-200 group-data-[collapsible=icon]:hidden hover:bg-(--theme-burgundy-800) hover:text-white ${isOpen ? "rotate-90 text-white" : "text-(--theme-burgundy-400)"}`}
                       >
                         <ChevronRight className="h-4 w-4" />
                       </SidebarMenuAction>
@@ -288,7 +305,7 @@ export function AdminSidebar() {
                           transition={{ duration: 0.2, ease: "easeInOut" }}
                           className="overflow-hidden"
                         >
-                          <SidebarMenuSub className="ml-3.5 border-l border-(--theme-navy-800) py-1 pl-2">
+                          <SidebarMenuSub className="ml-3.5 border-l border-(--theme-burgundy-800) py-1 pl-2">
                             {item.items.map((subItem, index) => {
                               const isSubActive = pathname === subItem.href;
 
@@ -300,15 +317,15 @@ export function AdminSidebar() {
                                       isActive={isSubActive}
                                       className={`h-8 cursor-pointer transition-colors ${
                                         isSubActive
-                                          ? "bg-(--theme-teal)/10 font-medium text-(--theme-teal)"
-                                          : "text-(--theme-navy-300) hover:bg-(--theme-navy-800)/50 hover:text-(--theme-navy-100)"
+                                          ? "bg-(--theme-taupe)/10 font-medium text-(--theme-taupe)"
+                                          : "text-(--theme-burgundy-300) hover:bg-white/5 hover:text-white"
                                       }`}
                                     >
                                       <Link href={subItem.href} prefetch={false}>
                                         {/* Adjusted icon size/color */}
                                         {subItem.icon && (
                                           <subItem.icon
-                                            className={`mr-2 h-4 w-4 ${isSubActive ? "text-(--theme-teal)" : "text-(--theme-navy-500) group-hover:text-(--theme-teal)"}`}
+                                            className={`mr-2 h-4 w-4 ${isSubActive ? "text-(--theme-taupe)" : "text-(--theme-burgundy-500) group-hover:text-(--theme-taupe)"}`}
                                           />
                                         )}
                                         <span>{subItem.label}</span>
@@ -317,7 +334,7 @@ export function AdminSidebar() {
                                   </SidebarMenuSubItem>
                                   {/* Add divider between items, but not after the last one */}
                                   {index < item.items!.length - 1 && (
-                                    <div className="mx-2 my-1 border-b border-(--theme-navy-800)/40" />
+                                    <div className="mx-2 my-1 border-b border-(--theme-burgundy-800)/40" />
                                   )}
                                 </div>
                               );
@@ -334,49 +351,51 @@ export function AdminSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-(--theme-navy-800)/50 p-2">
+      <SidebarFooter className="border-t border-(--theme-burgundy-800)/50 p-2">
         <SidebarMenu>
           <SidebarMenuItem className="relative">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
-                  className="w-full cursor-pointer transition-all duration-200 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2! hover:bg-(--theme-navy-800)/60 data-[state=open]:bg-(--theme-navy-800)/80"
+                  className="w-full cursor-pointer transition-all duration-200 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2! hover:bg-white/10 data-[state=open]:bg-white/15"
                 >
-                  <Avatar className="size-9 shrink-0 rounded-lg ring-2 ring-(--theme-teal)/40">
-                    <AvatarFallback className="rounded-lg bg-(--theme-teal) text-sm font-bold text-(--theme-navy-950)">
+                  <Avatar className="size-9 shrink-0 rounded-lg ring-2 ring-(--theme-taupe)/40">
+                    <AvatarFallback className="rounded-lg bg-(--theme-taupe) text-sm font-bold text-(--theme-burgundy-950)">
                       {getInitials(adminName)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
                     <span className="truncate font-semibold text-white">{adminName}</span>
-                    <span className="truncate text-xs text-(--theme-navy-400)">{adminEmail}</span>
+                    <span className="truncate text-xs text-(--theme-burgundy-400)">
+                      {adminPhone}
+                    </span>
                   </div>
-                  <ChevronRight className="ml-auto size-4 text-(--theme-navy-400) transition-transform duration-200 group-data-[collapsible=icon]:hidden group-data-[state=open]:rotate-90" />
+                  <ChevronRight className="ml-auto size-4 text-(--theme-burgundy-400) transition-transform duration-200 group-data-[collapsible=icon]:hidden group-data-[state=open]:rotate-90" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-[--radix-dropdown-menu-trigger-width] min-w-[240px] overflow-hidden rounded-lg border border-(--theme-navy-700) bg-(--theme-navy-900) p-0 shadow-2xl"
+                className="w-[--radix-dropdown-menu-trigger-width] min-w-[240px] overflow-hidden rounded-lg border border-(--theme-burgundy-700) bg-(--theme-burgundy-900) p-0 shadow-2xl"
                 side="top"
                 align="start"
                 sideOffset={6}
               >
                 {/* Profile Header */}
-                <div className="border-b border-(--theme-navy-700)/60 bg-(--theme-navy-800)/40 px-3 py-3">
+                <div className="border-b border-(--theme-burgundy-700)/60 bg-(--theme-burgundy-800)/40 px-3 py-3">
                   <div className="flex items-center gap-3">
-                    <Avatar className="size-10 shrink-0 rounded-lg ring-2 ring-(--theme-teal)/50">
-                      <AvatarFallback className="rounded-lg bg-(--theme-teal) font-bold text-(--theme-navy-950)">
+                    <Avatar className="size-10 shrink-0 rounded-lg ring-2 ring-(--theme-taupe)/50">
+                      <AvatarFallback className="rounded-lg bg-(--theme-taupe) font-bold text-(--theme-burgundy-950)">
                         {getInitials(adminName)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold text-white">{adminName}</p>
-                      <p className="truncate text-xs text-(--theme-navy-400)">{adminEmail}</p>
+                      <p className="truncate text-xs text-(--theme-burgundy-400)">{adminPhone}</p>
 
                       {/* Role Badge */}
-                      <div className="mt-2 inline-flex items-center gap-1.5 rounded-md border border-(--theme-teal)/30 bg-(--theme-teal)/10 px-2 py-1">
-                        <Shield className="size-3.5 text-(--theme-teal)" />
-                        <span className="text-xs font-medium text-(--theme-teal)">
+                      <div className="mt-2 inline-flex items-center gap-1.5 rounded-md border border-(--theme-taupe)/30 bg-(--theme-taupe)/10 px-2 py-1">
+                        <Shield className="size-3.5 text-(--theme-taupe)" />
+                        <span className="text-xs font-medium text-(--theme-taupe)">
                           {formatRole(adminRole)}
                         </span>
                       </div>
@@ -386,8 +405,8 @@ export function AdminSidebar() {
 
                 {/* Menu Items */}
                 <div className="p-1">
-                  {/* <DropdownMenuItem className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-sm text-(--theme-navy-200) transition-colors hover:bg-(--theme-navy-800) hover:text-white focus:bg-(--theme-navy-800) focus:text-white">
-                    <Settings className="size-4 text-(--theme-navy-400)" />
+                  {/* <DropdownMenuItem className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-sm text-(--theme-burgundy-200) transition-colors hover:bg-(--theme-burgundy-800) hover:text-white focus:bg-(--theme-burgundy-800) focus:text-white">
+                    <Settings className="size-4 text-(--theme-burgundy-400)" />
                     <span>Account Settings</span>
                   </DropdownMenuItem> */}
 
@@ -404,7 +423,7 @@ export function AdminSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
-      <SidebarRail className="hover:after:bg-(--theme-teal)" />
-    </Sidebar>
+      <SidebarRail className="hover:after:bg-(--theme-taupe)" />
+    </ShadcnSidebar>
   );
 }
