@@ -1,0 +1,16 @@
+# Netlify Configuration File
+# Professional configuration for deploying a Next.js application on Netlify.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # Ensures peer dependencies don't fail the build on Netlify's build servers
+  NPM_FLAGS = "--legacy-peer-deps"
+
+# Next.js Runtime handles all routing, dynamic routes, and API endpoints automatically on Netlify.
+# We do not specify SPA redirects (e.g. /* /index.html 200) since Netlify's Essential Next.js
+# plugin handles server-side rendering (SSR), Incremental Static Regeneration (ISR),
+# and dynamic route matching natively at the edge.
