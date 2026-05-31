@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Sidebar } from "@/components/pages/layout/Sidebar";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
@@ -19,30 +19,29 @@ export function LayoutClient({
   const router = useRouter();
   const isLoginPage = pathname === "/login";
 
-  /**
-   * Determine auth state synchronously on the client.
-   * `isAdminAuthenticated()` reads `document.cookie` — it's purely synchronous
-   * so we can initialise state immediately without a useEffect round-trip.
-   * During SSR (`typeof window === "undefined"`) cookies are unavailable,
-   * so we fall back to "checking" and resolve it in the useEffect below.
-   */
+  // Always start with "checking" so SSR and client initial render agree,
+  // preventing the hydration mismatch caused by reading cookies in the initializer.
   const [authState, setAuthState] = useState<"checking" | "authenticated" | "unauthenticated">(
-    () => {
-      if (isLoginPage) return "authenticated";
-      // Client-side: resolve immediately (no flash, no full-page loader on navigation)
-      if (typeof window !== "undefined") {
-        return isAdminAuthenticated() ? "authenticated" : "unauthenticated";
-      }
-      // SSR: unknown until hydration
-      return "checking";
-    }
+    "checking"
   );
 
-  // Re-verify on every pathname change (guards navigating to a protected page
-  // after the session expires, and resolves the SSR "checking" state).
+  // Resolve auth synchronously before first paint — no visual flash, no hydration mismatch.
+  useLayoutEffect(() => {
+    if (isLoginPage) {
+      setAuthState("authenticated");
+      return;
+    }
+    if (isAdminAuthenticated()) {
+      setAuthState("authenticated");
+    } else {
+      setAuthState("unauthenticated");
+      router.replace("/login");
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Re-verify on every pathname change (guards session expiry during navigation).
   useEffect(() => {
     if (isLoginPage) return;
-
     if (isAdminAuthenticated()) {
       setAuthState("authenticated");
     } else {

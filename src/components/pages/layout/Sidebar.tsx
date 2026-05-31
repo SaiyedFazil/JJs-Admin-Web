@@ -9,18 +9,17 @@ import { AnimatePresence, motion } from "motion/react";
 import {
   LayoutDashboard,
   Users,
-  Briefcase,
+  Package,
   Settings,
   LogOut,
-  // BarChart3,
   Search,
   ChevronRight,
-  UserCog,
-  ShieldCheck,
   Shield,
-  Link2,
-  Award,
-  Mail,
+  ClipboardList,
+  Smartphone,
+  BadgePercent,
+  ImagePlay,
+  SlidersHorizontal,
 } from "lucide-react";
 
 import {
@@ -65,6 +64,11 @@ type NavItem = {
 const mainNavItems: NavItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   {
+    icon: ClipboardList,
+    label: "Order Management",
+    href: "/orders",
+  },
+  {
     icon: Users,
     label: "Users Management",
     href: "/users",
@@ -73,26 +77,31 @@ const mainNavItems: NavItem[] = [
       { label: "Clients", href: "/users/clients" },
     ],
   },
-  { icon: Briefcase, label: "Job Management", href: "/jobs?status=PUBLISHED" },
-  { icon: UserCog, label: "Onboarding Configuration", href: "/onboarding-configuration" },
   {
-    icon: ShieldCheck,
-    label: "Content Verification",
-    href: "/content-verification",
+    icon: Package,
+    label: "Product Management",
+    href: "/products",
     items: [
-      { label: "Links", href: "/content-verification/links", icon: Link2 },
-      { label: "Certificates", href: "/content-verification/certificates", icon: Award },
+      { label: "Categories", href: "/products/categories" },
+      { label: "Menu Items", href: "/products/items" },
     ],
   },
-  { icon: Mail, label: "Email Logs", href: "/email-logs" },
-
+  { icon: BadgePercent, label: "Offers", href: "/offers" },
+  {
+    icon: Smartphone,
+    label: "App Customization",
+    href: "/app-customization",
+    items: [
+      { label: "Banners", href: "/app-customization/banners", icon: ImagePlay },
+      { label: "App Settings", href: "/app-customization/settings", icon: SlidersHorizontal },
+    ],
+  },
   {
     icon: Settings,
     label: "System Settings",
     href: "/settings",
     items: [{ label: "Global Variables", href: "/settings/global-variables" }],
   },
-  // { icon: BarChart3, label: "Analytics", href: "/analytics" },
 ];
 
 export function Sidebar() {
@@ -225,10 +234,10 @@ export function Sidebar() {
         {/* Search Bar (Optional, can be hidden in collapsed state usually) */}
         <div className="mb-4 px-2 group-data-[collapsible=icon]:hidden">
           <div className="relative">
-            <Search className="absolute top-2.5 left-2 h-4 w-4 text-(--theme-burgundy-400)" />
+            <Search className="absolute top-2.5 left-2 h-4 w-4 text-(--theme-burgundy-200)" />
             <SidebarInput
               placeholder="Search..."
-              className="border-(--theme-burgundy-800) bg-(--theme-burgundy-900) pl-8 text-(--theme-burgundy-100) placeholder:text-(--theme-burgundy-500) focus:border-(--theme-taupe) focus:ring-(--theme-taupe)/20"
+              className="border-(--theme-burgundy-800) bg-(--theme-burgundy-900) pl-8 text-(--theme-burgundy-100) placeholder:text-(--theme-burgundy-200) focus:border-(--theme-taupe) focus:ring-(--theme-taupe)/20"
             />
           </div>
         </div>
@@ -268,7 +277,7 @@ export function Sidebar() {
                         className="flex w-full items-center group-data-[collapsible=icon]:justify-center"
                       >
                         <item.icon
-                          className={`${isActive ? "text-(--theme-burgundy-950)" : isChildActive ? "text-(--theme-taupe)" : "text-(--theme-burgundy-400) group-hover:text-(--theme-taupe)"} transition-colors`}
+                          className={`${isActive ? "text-(--theme-burgundy-200)" : isChildActive ? "text-(--theme-taupe)" : "text-(--theme-burgundy-400) group-hover:text-(--theme-taupe)"} transition-colors`}
                         />
                         <span className="ml-3 group-data-[collapsible=icon]:hidden">
                           {item.label}
@@ -318,7 +327,7 @@ export function Sidebar() {
                                       className={`h-8 cursor-pointer transition-colors ${
                                         isSubActive
                                           ? "bg-(--theme-taupe)/10 font-medium text-(--theme-taupe)"
-                                          : "text-(--theme-burgundy-300) hover:bg-white/5 hover:text-white"
+                                          : "text-(--theme-burgundy-200) hover:bg-white/5 hover:text-white"
                                       }`}
                                     >
                                       <Link href={subItem.href} prefetch={false}>
