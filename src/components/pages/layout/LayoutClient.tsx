@@ -64,11 +64,8 @@ export function LayoutClient({
   if (authState === "checking" || authState === "unauthenticated") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-(--theme-burgundy-50)">
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-(--theme-burgundy)" />
-          <p className="text-sm text-(--theme-burgundy-600)">
-            {authState === "checking" ? "Loading..." : "Redirecting to login..."}
-          </p>
         </div>
       </div>
     );

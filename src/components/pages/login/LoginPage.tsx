@@ -21,7 +21,13 @@ export function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(() => {
+    if (typeof window !== "undefined") {
+      // If client-side, skip loading if we definitely don't have a session cookie
+      return document.cookie.includes("admin_access_token");
+    }
+    return false;
+  });
   const [error, setError] = useState("");
 
   // Check if admin is already authenticated on page load
