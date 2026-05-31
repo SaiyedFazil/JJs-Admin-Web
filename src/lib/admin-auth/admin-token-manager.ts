@@ -6,6 +6,7 @@
 
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { processQueue as processQueueItems, type QueueItem } from "@/lib/auth-shared/token-utils";
+import { EnumRole } from "@/components/common/constants";
 
 // Cookie helper: Set a cookie
 function setAdminCookie(name: string, value: string, days = 30): void {
@@ -93,19 +94,35 @@ export function clearAdminAuthTokens(): void {
 /**
  * Store admin role in cookies (1 month expiration)
  */
-export function storeAdminRole(role: "ADMIN" | "SUPER_ADMIN" | string): void {
-  setAdminCookie("admin_role", role, 30);
+export function storeAdminRole(role: string): void {
+  setAdminCookie("admin_role", role.toLowerCase(), 30);
 }
 
 /**
  * Get admin role from cookies
  */
-export function getAdminRole(): "ADMIN" | "SUPER_ADMIN" | null {
+export function getAdminRole(): EnumRole | null {
   const role = getAdminCookie("admin_role");
   if (role) {
-    const upperRole = role.toUpperCase();
-    if (upperRole === "ADMIN" || upperRole === "SUPER_ADMIN") {
-      return upperRole;
+    const lowerRole = role.toLowerCase();
+    if (lowerRole === EnumRole.Admin || lowerRole === "admin") {
+      return EnumRole.Admin;
+    }
+    if (
+      lowerRole === EnumRole.SuperAdmin ||
+      lowerRole === "superadmin" ||
+      lowerRole === "super_admin"
+    ) {
+      return EnumRole.SuperAdmin;
+    }
+    if (lowerRole === EnumRole.User || lowerRole === "user") {
+      return EnumRole.User;
+    }
+    if (lowerRole === EnumRole.Rider || lowerRole === "rider") {
+      return EnumRole.Rider;
+    }
+    if (lowerRole === EnumRole.Guest || lowerRole === "guest") {
+      return EnumRole.Guest;
     }
   }
   return null;
@@ -140,10 +157,14 @@ export function getAdminPhoneNumber(): string | null {
 }
 
 /**
- * Check if admin is authenticated (has tokens)
+ * Check if admin is authenticated (has tokens) and is authorized
  */
 export function isAdminAuthenticated(): boolean {
-  return !!getAdminAccessToken() && !!getAdminRefreshToken();
+  const hasTokens = !!getAdminAccessToken() && !!getAdminRefreshToken();
+  if (!hasTokens) return false;
+
+  const role = getAdminRole();
+  return role === EnumRole.Admin || role === EnumRole.SuperAdmin;
 }
 
 /**
@@ -163,18 +184,19 @@ export async function refreshAdminAuthTokens(): Promise<{
 
   try {
     const response = await axios.post(
-      `${API_BASE_URL}/auth/refresh`,
-      {},
+      `${API_BASE_URL}/user/auth/refresh-token`,
+      {
+        refreshToken,
+      },
       {
         headers: {
-          Authorization: `Bearer ${refreshToken}`,
           "Content-Type": "application/json",
         },
       }
     );
 
-    if (response.data?.tokens) {
-      const { accessToken, refreshToken: newRefreshToken } = response.data.tokens;
+    if (response.data?.status && response.data?.data) {
+      const { accessToken, refreshToken: newRefreshToken } = response.data.data;
 
       // Store new tokens
       storeAdminAuthTokens(accessToken, newRefreshToken);
@@ -204,7 +226,7 @@ export async function refreshAdminAuthTokens(): Promise<{
  */
 export function setupAdminAxiosInterceptors(axiosInstance: ReturnType<typeof axios.create>): void {
   // List of public endpoints that don't require authentication
-  const PUBLIC_ENDPOINTS = ["/auth/admin/login", "/admin/login"];
+  const PUBLIC_ENDPOINTS = ["/auth/admin/login", "/admin/login", "/user/auth/refresh-token"];
 
   /**
    * Check if the request URL is a public endpoint
@@ -247,7 +269,7 @@ export function setupAdminAxiosInterceptors(axiosInstance: ReturnType<typeof axi
       // If error is 401 and we haven't already tried to refresh
       if (error.response?.status === 401 && !originalRequest._retry) {
         // Check if this is a refresh token request itself (avoid infinite loop)
-        if (originalRequest.url?.includes("/auth/refresh")) {
+        if (originalRequest.url?.includes("/user/auth/refresh-token")) {
           clearAdminAuthTokens();
           return Promise.reject(error);
         }

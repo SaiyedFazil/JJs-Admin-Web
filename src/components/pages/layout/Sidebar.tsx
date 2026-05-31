@@ -414,10 +414,15 @@ export function Sidebar() {
 
                 {/* Menu Items */}
                 <div className="p-1">
-                  {/* <DropdownMenuItem className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-sm text-(--theme-burgundy-200) transition-colors hover:bg-(--theme-burgundy-800) hover:text-white focus:bg-(--theme-burgundy-800) focus:text-white">
-                    <Settings className="size-4 text-(--theme-burgundy-400)" />
-                    <span>Account Settings</span>
-                  </DropdownMenuItem> */}
+                  <DropdownMenuItem
+                    asChild
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-sm text-(--theme-burgundy-200) transition-colors hover:bg-(--theme-burgundy-800) hover:text-white focus:bg-(--theme-burgundy-800) focus:text-white"
+                  >
+                    <Link href="/settings/account" className="flex w-full items-center gap-2">
+                      <Settings className="size-4 text-(--theme-burgundy-400)" />
+                      <span>Account Settings</span>
+                    </Link>
+                  </DropdownMenuItem>
 
                   <DropdownMenuItem
                     onClick={handleAdminLogout}

@@ -83,15 +83,15 @@ export function PasswordStrengthIndicator({
       return {
         label: "Good",
         value: 75,
-        colorClass: "text-(--theme-coffee)",
-        barColor: "var(--theme-coffee)", // theme blue
+        colorClass: "text-blue-500",
+        barColor: "#3b82f6", // blue-500
       };
     } else {
       return {
         label: "Strong",
         value: 100,
-        colorClass: "text-(--theme-taupe-500)",
-        barColor: "var(--theme-taupe-500)", // theme teal
+        colorClass: "text-green-500",
+        barColor: "#22c55e", // green-500
       };
     }
   };
@@ -105,10 +105,7 @@ export function PasswordStrengthIndicator({
         <motion.div
           className={cn(
             "shadow-theme-xl rounded-lg border border-(--theme-taupe-200) bg-white p-3 sm:p-4",
-            // Mobile/Tablet (below xl): relative positioning, below the input
-            "relative z-40 mt-3 w-full",
-            // Desktop xl+: absolute positioning, to the right of input
-            "xl:absolute xl:top-1/2 xl:left-full xl:z-50 xl:mt-0 xl:ml-4 xl:w-64 xl:-translate-y-1/2",
+            "relative z-40 w-full",
             // Apply custom styling
             className
           )}
@@ -117,8 +114,8 @@ export function PasswordStrengthIndicator({
           exit={{ opacity: 0, y: 10, scale: 0.95 }}
           transition={{ duration: 0.2 }}
         >
-          {/* Arrow pointing to input - only show on xl+ desktop */}
-          <div className="absolute top-1/2 left-0 -ml-2 hidden h-4 w-4 -translate-y-1/2 rotate-315 border-t border-l border-(--theme-taupe-200) bg-white xl:block" />
+          {/* Arrow pointing to input - only show on md+ desktop */}
+          <div className="absolute top-[20px] left-0 -ml-2 hidden h-4 w-4 -translate-y-1/2 rotate-315 border-t border-l border-(--theme-taupe-200) bg-white md:block" />
 
           {/* Title */}
           <h4 className="mb-3 text-sm font-semibold text-(--theme-burgundy-800)">
