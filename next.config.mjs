@@ -8,7 +8,7 @@ const nextConfig = {
   turbopack: {
     root: __dirname,
   },
-  allowedDevOrigins: ["192.168.1.2", "localhost"],
+  allowedDevOrigins: ["192.168.1.2", "localhost", "jj-admin.netlify.app"],
 };
 
 export default nextConfig;
