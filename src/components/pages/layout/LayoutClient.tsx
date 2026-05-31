@@ -60,13 +60,15 @@ export function LayoutClient({
   const isJobDetailPage = pathname?.startsWith("/jobs/") && pathname !== "/jobs";
   const isFullPageView = isProfilePage || isJobDetailPage;
 
-  // ── Unauthenticated: brief redirect spinner (full-screen, no layout) ─────────
-  if (authState === "unauthenticated") {
+  // ── Checking / Unauthenticated: brief redirect spinner (full-screen, no layout) ─────────
+  if (authState === "checking" || authState === "unauthenticated") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-(--theme-burgundy-50)">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-(--theme-burgundy)" />
-          <p className="text-sm text-(--theme-burgundy-600)">Redirecting to login...</p>
+          <p className="text-sm text-(--theme-burgundy-600)">
+            {authState === "checking" ? "Loading..." : "Redirecting to login..."}
+          </p>
         </div>
       </div>
     );
@@ -80,12 +82,9 @@ export function LayoutClient({
   /**
    * ── Dashboard layout (sidebar + navbar always visible) ──────────────────────
    *
-   * When authState === "checking" (SSR-only hydration gap) we still render the
-   * full shell with the sidebar and header so the layout never "disappears".
-   * The content area shows a subtle spinner until hydration resolves.
+   * Reached only when authState === "authenticated". Renders the full shell
+   * with sidebar, header, and children seamlessly.
    */
-  const isContentLoading = authState === "checking";
-
   return (
     <BreadcrumbProvider>
       <SidebarProvider defaultOpen={defaultOpen}>
@@ -100,19 +99,9 @@ export function LayoutClient({
 
           {/* ── Scrollable content area ── */}
           <div className="flex flex-1 flex-col overflow-auto p-4">
-            {isContentLoading ? (
-              /* Content-area only loader — sidebar + navbar remain visible */
-              <div className="flex flex-1 items-center justify-center">
-                <div className="flex flex-col items-center gap-3">
-                  <Loader2 className="h-7 w-7 animate-spin text-(--theme-burgundy)" />
-                  <p className="text-sm text-(--theme-burgundy-500)">Loading...</p>
-                </div>
-              </div>
-            ) : (
-              <main className="animate-in fade-in mx-auto flex w-full max-w-7xl flex-1 flex-col py-6 duration-300">
-                {children}
-              </main>
-            )}
+            <main className="animate-in fade-in mx-auto flex w-full max-w-7xl flex-1 flex-col py-6 duration-300">
+              {children}
+            </main>
           </div>
         </SidebarInset>
       </SidebarProvider>
