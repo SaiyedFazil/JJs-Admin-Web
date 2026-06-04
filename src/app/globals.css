@@ -223,39 +223,15 @@
   --sidebar-border: var(--theme-burgundy-600);
   --sidebar-ring: var(--theme-taupe);
 
-  /* ========== GRADIENT DEFINITIONS ========== */
-  --gradient-primary: linear-gradient(135deg, var(--theme-burgundy) 0%, var(--theme-coffee) 100%);
-  --gradient-primary-reverse: linear-gradient(
-    135deg,
-    var(--theme-coffee) 0%,
-    var(--theme-burgundy) 100%
-  );
-  --gradient-accent: linear-gradient(135deg, var(--theme-taupe) 0%, var(--theme-cream) 100%);
-  --gradient-accent-reverse: linear-gradient(
-    135deg,
-    var(--theme-cream) 0%,
-    var(--theme-taupe) 100%
-  );
-  --gradient-full: linear-gradient(
-    135deg,
-    var(--theme-burgundy) 0%,
-    var(--theme-coffee) 35%,
-    var(--theme-taupe) 70%,
-    var(--theme-cream) 100%
-  );
-  --gradient-hero: linear-gradient(
-    135deg,
-    var(--theme-cream-50) 0%,
-    #ffffff 50%,
-    var(--theme-taupe-50) 100%
-  );
-  --gradient-card: linear-gradient(180deg, #ffffff 0%, var(--theme-cream-50) 100%);
-  --gradient-sidebar: linear-gradient(
-    180deg,
-    var(--theme-burgundy) 0%,
-    var(--theme-burgundy-800) 50%,
-    var(--theme-coffee-700) 100%
-  );
+  /* ========== SOLID THEME COLOR DEFINITIONS ========== */
+  --solid-primary: var(--theme-burgundy);
+  --solid-primary-reverse: var(--theme-coffee);
+  --solid-accent: var(--theme-taupe);
+  --solid-accent-reverse: var(--theme-cream);
+  --solid-full: var(--theme-burgundy);
+  --solid-hero: #ffffff;
+  --solid-card: #ffffff;
+  --solid-sidebar: var(--theme-burgundy);
 
   /* ========== SHADOW DEFINITIONS ========== */
   --shadow-sm: 0 1px 2px rgba(84, 26, 26, 0.05);
@@ -330,13 +306,9 @@
   --sidebar-border: #26030f;
   --sidebar-ring: var(--theme-taupe);
 
-  --gradient-primary: linear-gradient(
-    135deg,
-    var(--theme-coffee-500) 0%,
-    var(--theme-taupe-400) 100%
-  );
-  --gradient-hero: linear-gradient(135deg, #1a020a 0%, #26030f 50%, #390216 100%);
-  --gradient-sidebar: linear-gradient(180deg, #1a020a 0%, #26030f 100%);
+  --solid-primary: var(--theme-coffee-500);
+  --solid-hero: #1a020a;
+  --solid-sidebar: #1a020a;
 }
 
 /* ========== BASE LAYER STYLES ========== */
@@ -388,24 +360,24 @@
 /* ========== UTILITY CLASSES ========== */
 @layer utilities {
   /* Background utilities */
-  .bg-theme-gradient {
-    background: var(--gradient-primary);
+  .bg-theme-solid {
+    background: var(--solid-primary);
   }
 
-  .bg-theme-gradient-accent {
-    background: var(--gradient-accent);
+  .bg-theme-solid-accent {
+    background: var(--solid-accent);
   }
 
-  .bg-theme-gradient-full {
-    background: var(--gradient-full);
+  .bg-theme-solid-full {
+    background: var(--solid-full);
   }
 
   .bg-theme-hero {
-    background: var(--gradient-hero);
+    background: var(--solid-hero);
   }
 
   .bg-theme-sidebar {
-    background: var(--gradient-sidebar);
+    background: var(--solid-sidebar);
   }
 
   /* Shadow utilities */
@@ -437,12 +409,9 @@
     box-shadow: var(--shadow-glow);
   }
 
-  /* Text gradient */
-  .text-theme-gradient {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  /* Text theme solid */
+  .text-theme-solid {
+    color: var(--primary);
   }
 
   /* Glass effect */
@@ -478,7 +447,7 @@
     content: "";
     position: absolute;
     inset: -2px;
-    background: var(--gradient-primary);
+    background: var(--solid-primary);
     border-radius: inherit;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -540,15 +509,9 @@
   }
 
   /* ========== PROFILE PAGE UTILITIES ========== */
-  /* Profile cover photo gradient overlay */
-  .profile-cover-gradient {
-    background: linear-gradient(
-      135deg,
-      var(--theme-burgundy) 0%,
-      var(--theme-coffee) 40%,
-      var(--theme-taupe) 70%,
-      var(--theme-cream) 100%
-    );
+  /* Profile cover photo solid background overlay */
+  .profile-cover-solid {
+    background: var(--theme-burgundy);
   }
 
   /* Profile avatar ring animation */
@@ -580,14 +543,9 @@
     box-shadow: 0 4px 12px -2px rgba(129, 11, 56, 0.15);
   }
 
-  /* Timeline line gradient */
-  .timeline-line-gradient {
-    background: linear-gradient(
-      180deg,
-      var(--theme-taupe) 0%,
-      var(--theme-coffee) 50%,
-      var(--theme-burgundy-200) 100%
-    );
+  /* Timeline line solid */
+  .timeline-line-solid {
+    background: var(--theme-taupe);
   }
 
   /* Project card overlay */
@@ -597,12 +555,7 @@
 
   /* Profile section divider */
   .profile-divider {
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      var(--theme-taupe-200) 50%,
-      transparent 100%
-    );
+    background: var(--theme-taupe-200);
     height: 1px;
   }
 

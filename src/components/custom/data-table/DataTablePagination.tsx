@@ -14,11 +14,13 @@ import {
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
   totalRows?: number;
+  pageSizeOptions?: number[];
 }
 
 export function DataTablePagination<TData>({
   table,
   totalRows: manualTotalRows,
+  pageSizeOptions = [25, 50, 75, 100],
 }: DataTablePaginationProps<TData>) {
   const pageIndex = table.getState().pagination.pageIndex;
   const pageSize = table.getState().pagination.pageSize;
@@ -69,7 +71,7 @@ export function DataTablePagination<TData>({
       : `Showing ${startRow} to ${endRow} of ${totalRows} entries`;
 
   return (
-    <div ref={paginationRef}>
+    <div ref={paginationRef} className="py-1">
       {/* Desktop Layout - Original layout for lg screens and above */}
       <div className="hidden items-center justify-between px-0 lg:flex">
         <div className="text-sm">{showingText}</div>
@@ -82,12 +84,16 @@ export function DataTablePagination<TData>({
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger className="h-9 w-[75px] border-gray-300 bg-white shadow-sm">
+              <SelectTrigger className="h-9 w-[75px] cursor-pointer bg-white! shadow-sm">
                 <SelectValue placeholder={pageSize} />
               </SelectTrigger>
-              <SelectContent side="top" className="min-w-auto">
-                {[25, 50, 75, 100].map((pageSize) => (
-                  <SelectItem key={pageSize} value={`${pageSize}`}>
+              <SelectContent
+                position="popper"
+                side="top"
+                className="border-border! min-w-auto bg-white!"
+              >
+                {pageSizeOptions.map((pageSize) => (
+                  <SelectItem key={pageSize} value={`${pageSize}`} className="cursor-pointer">
                     {pageSize}
                   </SelectItem>
                 ))}
@@ -97,7 +103,7 @@ export function DataTablePagination<TData>({
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"
-              className="h-9 w-9 cursor-pointer border-gray-300 bg-white p-0 shadow-sm hover:bg-gray-50"
+              className="h-9 w-9 cursor-pointer bg-white! p-0 shadow-sm"
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
@@ -106,7 +112,7 @@ export function DataTablePagination<TData>({
             </Button>
             <Button
               variant="outline"
-              className="h-9 w-9 cursor-pointer border-gray-300 bg-white p-0 shadow-sm hover:bg-gray-50"
+              className="h-9 w-9 cursor-pointer bg-white! p-0 shadow-sm"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
@@ -118,7 +124,7 @@ export function DataTablePagination<TData>({
             </div>
             <Button
               variant="outline"
-              className="h-9 w-9 cursor-pointer border-gray-300 bg-white p-0 shadow-sm hover:bg-gray-50"
+              className="h-9 w-9 cursor-pointer bg-white! p-0 shadow-sm"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
@@ -127,7 +133,7 @@ export function DataTablePagination<TData>({
             </Button>
             <Button
               variant="outline"
-              className="h-9 w-9 cursor-pointer border-gray-300 bg-white p-0 shadow-sm hover:bg-gray-50"
+              className="h-9 w-9 cursor-pointer bg-white! p-0 shadow-sm"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
             >
@@ -142,20 +148,24 @@ export function DataTablePagination<TData>({
       <div className="flex flex-col gap-3 lg:hidden">
         {/* Row 1: Entries count on left, Rows per page on right */}
         <div className="flex items-center justify-between">
-          <div className="text-xs text-(--theme-burgundy-600)">{showingText}</div>
+          <div className="text-muted-foreground text-xs">{showingText}</div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-(--theme-burgundy-500)">Rows</span>
+            <span className="text-muted-foreground text-xs">Rows</span>
             <Select
               value={`${pageSize}`}
               onValueChange={(value) => {
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger className="h-8 w-[65px] border-gray-300 bg-white text-xs shadow-sm">
+              <SelectTrigger className="h-8 w-[65px] bg-white! text-xs shadow-sm">
                 <SelectValue placeholder={pageSize} />
               </SelectTrigger>
-              <SelectContent side="top" className="min-w-auto">
-                {[25, 50].map((pageSize) => (
+              <SelectContent
+                position="popper"
+                side="top"
+                className="border-border! min-w-auto bg-white!"
+              >
+                {pageSizeOptions.map((pageSize) => (
                   <SelectItem key={pageSize} value={`${pageSize}`}>
                     {pageSize}
                   </SelectItem>
@@ -169,7 +179,7 @@ export function DataTablePagination<TData>({
         <div className="flex items-center justify-center gap-1">
           <Button
             variant="outline"
-            className="h-8 w-8 cursor-pointer border-gray-300 bg-white p-0 shadow-sm hover:bg-gray-50"
+            className="h-8 w-8 cursor-pointer bg-white! p-0 shadow-sm"
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
           >
@@ -178,19 +188,19 @@ export function DataTablePagination<TData>({
           </Button>
           <Button
             variant="outline"
-            className="h-8 w-8 cursor-pointer border-gray-300 bg-white p-0 shadow-sm hover:bg-gray-50"
+            className="h-8 w-8 cursor-pointer bg-white! p-0 shadow-sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
             <span className="sr-only">Go to previous page</span>
             <ChevronLeft className="h-3.5 w-3.5" />
           </Button>
-          <div className="flex min-w-[80px] items-center justify-center px-2 text-xs font-medium text-(--theme-burgundy-700)">
+          <div className="text-foreground flex min-w-[80px] items-center justify-center px-2 text-xs font-medium">
             Page {pageIndex + 1} of {table.getPageCount()}
           </div>
           <Button
             variant="outline"
-            className="h-8 w-8 cursor-pointer border-gray-300 bg-white p-0 shadow-sm hover:bg-gray-50"
+            className="h-8 w-8 cursor-pointer bg-white! p-0 shadow-sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
@@ -199,7 +209,7 @@ export function DataTablePagination<TData>({
           </Button>
           <Button
             variant="outline"
-            className="h-8 w-8 cursor-pointer border-gray-300 bg-white p-0 shadow-sm hover:bg-gray-50"
+            className="h-8 w-8 cursor-pointer bg-white! p-0 shadow-sm"
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
           >

@@ -53,7 +53,7 @@ export function ProductsClient() {
               className="flex w-full cursor-pointer items-center justify-center gap-2 group-hover:bg-(--theme-taupe-300) hover:bg-(--theme-taupe-300)"
               asChild
             >
-              <Link href="/products/categories">
+              <Link href="/products/category">
                 <span>Manage Categories</span>
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>

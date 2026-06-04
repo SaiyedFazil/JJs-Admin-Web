@@ -29,7 +29,7 @@ export function DataTableColumnHeader<TData, TValue>({
       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
     >
       <span className="truncate">{title}</span>
-      <span className="ml-2 flex shrink-0 items-center">
+      <span className="ml-2 flex shrink-0 items-center text-white">
         {column.getIsSorted() === "desc" ? (
           <ArrowDown className="h-4 w-4" />
         ) : column.getIsSorted() === "asc" ? (

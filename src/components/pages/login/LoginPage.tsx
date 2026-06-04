@@ -241,7 +241,8 @@ function AdminBackground() {
         <div
           className="absolute inset-0"
           style={{
-            background: "radial-gradient(circle, transparent 30%, var(--background-secondary) 90%)",
+            backgroundColor: "var(--background-secondary)",
+            opacity: 0.7,
           }}
         />
       </div>

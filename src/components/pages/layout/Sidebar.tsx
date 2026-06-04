@@ -82,7 +82,7 @@ const mainNavItems: NavItem[] = [
     label: "Product Management",
     href: "/products",
     items: [
-      { label: "Categories", href: "/products/categories" },
+      { label: "Categories", href: "/products/category" },
       { label: "Menu Items", href: "/products/items" },
     ],
   },

@@ -50,7 +50,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="bg-theme-gradient relative overflow-hidden rounded-3xl p-8 text-white shadow-xl">
+      <div className="relative overflow-hidden rounded-3xl bg-(--theme-burgundy) p-8 text-white shadow-xl">
         <div className="absolute -top-12 -right-12 h-40 w-40 rounded-full bg-(--theme-taupe-200) opacity-20 blur-3xl" />
         <div className="absolute -bottom-12 -left-12 h-40 w-40 rounded-full bg-(--theme-coffee-200) opacity-20 blur-3xl" />
 

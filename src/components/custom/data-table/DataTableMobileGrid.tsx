@@ -25,13 +25,13 @@ export function DataTableMobileGrid<TData>({ table }: DataTableMobileGridProps<T
 
   if (!rows.length) {
     return (
-      <div className="flex items-center justify-center rounded-xl border border-dashed border-(--theme-coffee-200) bg-white/50 p-12">
+      <div className="border-border bg-card flex items-center justify-center rounded-xl border border-dashed p-12">
         <div className="text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-(--theme-cream-100)">
-            <MoreVertical className="h-6 w-6 text-(--theme-coffee-400)" />
+          <div className="bg-muted mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full">
+            <MoreVertical className="text-muted-foreground h-6 w-6" />
           </div>
-          <p className="text-sm font-medium text-(--theme-burgundy-700)">No results found</p>
-          <p className="mt-1 text-xs text-(--theme-burgundy-400)">
+          <p className="text-foreground text-sm font-medium">No results found</p>
+          <p className="text-muted-foreground mt-1 text-xs">
             Try adjusting your filters or search criteria
           </p>
         </div>
@@ -64,17 +64,17 @@ export function DataTableMobileGrid<TData>({ table }: DataTableMobileGridProps<T
           <div
             key={row.id}
             className={cn(
-              "group relative overflow-hidden rounded-xl border bg-white transition-all duration-200",
-              "border-(--theme-coffee-100) hover:border-(--theme-taupe-300)",
+              "group bg-card relative flex h-full flex-col overflow-hidden rounded-xl border transition-all duration-200",
+              "border-border hover:border-primary/50",
               "shadow-sm hover:shadow-md"
             )}
           >
             {/* Card Header - Primary Column */}
-            <div className="flex items-start justify-between gap-3 border-b border-(--theme-coffee-50) bg-linear-to-r from-(--theme-cream-50) to-white p-3.5">
+            <div className="border-border bg-primary/70 flex min-h-[72px] items-start justify-between gap-3 border-b p-3.5">
               <div className="min-w-0 flex-1">
                 {/* Primary Column Label */}
                 {primaryHeader && (
-                  <p className="mb-1 text-[10px] font-semibold tracking-wider text-(--theme-coffee-400) uppercase">
+                  <p className="text-secondary mb-1 text-[10px] font-bold tracking-wider uppercase">
                     {typeof primaryHeader.column.columnDef.header === "function"
                       ? (() => {
                           // Extract title from the header component if possible
@@ -99,7 +99,7 @@ export function DataTableMobileGrid<TData>({ table }: DataTableMobileGridProps<T
                 )}
                 {/* Primary Column Value */}
                 {primaryCell && (
-                  <div className="text-sm font-medium text-(--theme-burgundy-900)">
+                  <div className="text-secondary text-sm font-semibold">
                     {flexRender(primaryCell.column.columnDef.cell, primaryCell.getContext())}
                   </div>
                 )}
@@ -107,7 +107,7 @@ export function DataTableMobileGrid<TData>({ table }: DataTableMobileGridProps<T
             </div>
 
             {/* Card Body - Other Columns */}
-            <div className="space-y-2.5 p-3.5">
+            <div className="flex-1 space-y-2.5 p-3.5">
               {remainingCells.map((cell) => {
                 const header = headers.find((h) => h.id === cell.column.id);
                 const headerLabel = (() => {
@@ -128,23 +128,15 @@ export function DataTableMobileGrid<TData>({ table }: DataTableMobileGridProps<T
                   return header.column.columnDef.header || cell.column.id;
                 })();
 
-                const alignMobile = (cell.column.columnDef.meta as Record<string, unknown>)
-                  ?.alignMobile;
-
                 return (
                   <div
                     key={cell.id}
-                    className={cn(
-                      "flex gap-2",
-                      alignMobile === "center" || cell.column.id === "value"
-                        ? "items-center"
-                        : "items-start"
-                    )}
+                    className="flex flex-wrap items-center justify-start gap-x-3 gap-y-1 py-1"
                   >
-                    <span className="shrink-0 text-xs font-medium text-(--theme-burgundy-400)">
+                    <span className="text-muted-foreground w-24 shrink-0 text-xs font-medium">
                       {headerLabel}
                     </span>
-                    <div className="min-w-0 text-sm text-(--theme-burgundy-700)">
+                    <div className="text-foreground flex max-w-full items-center justify-start text-sm wrap-break-word">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </div>
                   </div>
@@ -154,14 +146,16 @@ export function DataTableMobileGrid<TData>({ table }: DataTableMobileGridProps<T
 
             {/* Action Footer */}
             {actionCell && (
-              <div className="flex items-center justify-center border-t border-(--theme-coffee-50) bg-slate-50/50 p-3">
-                {flexRender(actionCell.column.columnDef.cell, actionCell.getContext())}
+              <div className="border-border bg-muted/20 flex items-center justify-center border-t p-3">
+                <div className="contents">
+                  {flexRender(actionCell.column.columnDef.cell, actionCell.getContext())}
+                </div>
               </div>
             )}
 
             {/* Selection indicator glow effect */}
             {row.getIsSelected() && (
-              <div className="pointer-events-none absolute inset-0 rounded-xl ring-2 ring-(--theme-taupe-400)" />
+              <div className="ring-primary pointer-events-none absolute inset-0 rounded-xl ring-2" />
             )}
           </div>
         );
