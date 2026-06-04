@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { Plus, AlertTriangle } from "lucide-react";
+import { Plus, AlertTriangle, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBreadcrumb } from "@/components/pages/layout/Breadcrumb";
 import { Toast, useToast } from "@/components/common";
@@ -10,6 +10,9 @@ import { getAllCategories } from "@/lib/api/admin/category-api";
 import type { Category } from "@/types";
 import { getColumns } from "./CategoryColumns";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CreateUpdateCategoryDialog } from "./create-update-category-dialog/CreateUpdateCategoryDialog";
+import { ConfirmationDialog } from "@/components/custom/ConfirmationDialog";
+import { deleteCategory } from "@/lib/api/admin/category-api";
 
 // Skeleton view for visual page loading state
 const CategorySkeleton = () => (
@@ -22,12 +25,12 @@ const CategorySkeleton = () => (
       <Skeleton className="h-10 w-32 rounded-lg" />
     </div>
     <div className="border-muted space-y-4 rounded-xl border p-4">
-      {Array.from({ length: 5 }).map((_, i) => (
+      {Array.from({ length: 4 }).map((_, i) => (
         <div
           key={i}
           className="border-muted/50 flex items-center gap-6 border-b py-3 last:border-0"
         >
-          <Skeleton className="h-20 w-20 shrink-0 rounded-2xl" />
+          <Skeleton className="h-28 w-28 shrink-0 rounded-2xl" />
           <Skeleton className="h-6 w-16" />
           <Skeleton className="h-6 max-w-sm flex-1" />
           <Skeleton className="h-6 w-28" />
@@ -46,6 +49,13 @@ export function CategoryClient() {
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Dialog State
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchCategories = useCallback(
     async (isRefresh = false) => {
@@ -80,27 +90,42 @@ export function CategoryClient() {
   );
 
   useEffect(() => {
-    setBreadcrumbs([
-      { label: "Dashboard", href: "/dashboard" },
-      { label: "Product Management", href: "/products" },
-      { label: "Categories" },
-    ]);
+    setBreadcrumbs([{ label: "Product Management", href: "/products" }, { label: "Categories" }]);
     fetchCategories();
   }, [setBreadcrumbs, fetchCategories]);
 
-  const handleEditClick = useCallback(
-    (category: Category) => {
-      showToast(`Edit Category clicked for: ${category.name} (ID: ${category.id})`, "success");
-    },
-    [showToast]
-  );
+  const handleEditClick = useCallback((category: Category) => {
+    setSelectedCategory(category);
+    setIsFormOpen(true);
+  }, []);
 
-  const handleDeleteClick = useCallback(
-    (category: Category) => {
-      showToast(`Delete Category clicked for: ${category.name} (ID: ${category.id})`, "error");
-    },
-    [showToast]
-  );
+  const handleDeleteClick = useCallback((category: Category) => {
+    setCategoryToDelete(category);
+    setIsConfirmDeleteOpen(true);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!categoryToDelete) return;
+    setIsDeleting(true);
+    try {
+      const response = await deleteCategory(categoryToDelete.id);
+      const isSuccess =
+        response.success || (response as unknown as { status?: boolean }).status === true;
+      if (isSuccess) {
+        showToast(response.message || "Category deleted successfully.", "success");
+        setIsConfirmDeleteOpen(false);
+        setCategoryToDelete(null);
+        fetchCategories(true);
+      } else {
+        showToast(response.message || "Failed to delete category.", "error");
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to delete category.";
+      showToast(msg, "error");
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [categoryToDelete, fetchCategories, showToast]);
 
   // Instantiating columns with the local event handlers
   const columns = useMemo(
@@ -110,7 +135,7 @@ export function CategoryClient() {
 
   if (isLoading) {
     return (
-      <div className="py-4">
+      <div>
         <CategorySkeleton />
       </div>
     );
@@ -135,7 +160,7 @@ export function CategoryClient() {
   }
 
   return (
-    <div className="space-y-6 py-4">
+    <div className="space-y-6">
       {toast && (
         <Toast message={toast.message} type={toast.type} onClose={hideToast} duration={5000} />
       )}
@@ -154,7 +179,10 @@ export function CategoryClient() {
         <Button
           variant="premium"
           className="flex cursor-pointer items-center gap-2 self-start sm:self-auto"
-          onClick={() => showToast("Add Category action is a placeholder", "success")}
+          onClick={() => {
+            setSelectedCategory(null);
+            setIsFormOpen(true);
+          }}
         >
           <Plus className="h-4 w-4" />
           <span>Add Category</span>
@@ -171,6 +199,40 @@ export function CategoryClient() {
         align="left"
         hidePagination
         manualPagination
+      />
+
+      {/* Create / Update Category Dialog */}
+      <CreateUpdateCategoryDialog
+        isOpen={isFormOpen}
+        onClose={() => {
+          setIsFormOpen(false);
+          setSelectedCategory(null);
+        }}
+        category={selectedCategory}
+        onSuccess={() => fetchCategories(true)}
+        showToast={showToast}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={isConfirmDeleteOpen}
+        title="Delete Category"
+        description={
+          <span className="text-sm font-medium">
+            Are you sure you want to delete category{" "}
+            <span className="font-bold text-(--theme-burgundy-950)">{categoryToDelete?.name}</span>?
+            This action will soft-delete the category.
+          </span>
+        }
+        isLoading={isDeleting}
+        onClose={() => {
+          setIsConfirmDeleteOpen(false);
+          setCategoryToDelete(null);
+        }}
+        onConfirm={handleDeleteConfirm}
+        confirmButtonText="Delete"
+        variant="danger"
+        icon={<Trash2 className="h-6 w-6 text-red-600" />}
       />
     </div>
   );

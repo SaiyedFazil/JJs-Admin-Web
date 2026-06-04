@@ -83,7 +83,7 @@ export function Breadcrumb() {
             {item.onClick && !isLast ? (
               <button
                 onClick={item.onClick}
-                className="cursor-pointer transition-colors hover:text-(--theme-taupe)"
+                className="cursor-pointer transition-colors hover:text-(--theme-burgundy-500) hover:underline"
               >
                 {item.label}
               </button>
@@ -91,7 +91,7 @@ export function Breadcrumb() {
               <Link
                 href={item.href}
                 prefetch={false}
-                className="transition-colors hover:text-(--theme-taupe)"
+                className="transition-colors hover:text-(--theme-burgundy-500) hover:underline"
               >
                 {item.label}
               </Link>

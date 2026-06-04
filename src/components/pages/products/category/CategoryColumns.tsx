@@ -29,22 +29,22 @@ function CategoryImage({ src, name }: { src?: string; name: string }) {
       : "CAT";
 
     return (
-      <div className="relative flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-(--theme-taupe-200) bg-(--theme-taupe-100) text-(--theme-burgundy-900) shadow-inner">
-        <FolderTree className="absolute h-10 w-10 opacity-10" />
-        <span className="relative z-10 text-xl font-bold tracking-wider">{initials}</span>
+      <div className="relative flex h-28 w-28 shrink-0 items-center justify-center rounded-2xl border border-(--theme-taupe-200) bg-(--theme-taupe-100) text-(--theme-burgundy-900) shadow-inner">
+        <FolderTree className="absolute h-14 w-14 opacity-10" />
+        <span className="relative z-10 text-3xl font-bold tracking-wider">{initials}</span>
       </div>
     );
   }
 
   return (
-    <div className="group relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-(--theme-burgundy-100) shadow-sm transition-transform duration-300 hover:scale-105">
+    <div className="group relative h-28 w-28 shrink-0 overflow-hidden rounded-2xl border border-(--theme-burgundy-100) shadow-sm">
       <Image
         src={src}
         alt={name}
-        width={80}
-        height={80}
+        width={112}
+        height={112}
         unoptimized
-        className="h-full w-full object-cover object-center transition-all duration-300 group-hover:scale-110"
+        className="h-full w-full object-cover object-center"
         onError={() => setHasError(true)}
       />
     </div>

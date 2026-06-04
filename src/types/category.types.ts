@@ -11,3 +11,13 @@ export interface GetAllCategoriesResponse {
   data: Category[];
   message: string;
 }
+
+export interface CreateCategoryPayload {
+  name: string;
+  categoryImage: File;
+}
+
+export interface UpdateCategoryPayload {
+  name?: string;
+  categoryImage?: File;
+}
