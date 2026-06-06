@@ -2,7 +2,8 @@
 
 import { CloudUpload, FileText, X } from "lucide-react";
 import type { ReactNode } from "react";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import Image from "next/image";
 import type { DropEvent, DropzoneOptions, FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
@@ -128,7 +129,7 @@ export const Dropzone = ({
         <input {...getInputProps()} disabled={disabled} />
         <div
           className={cn(
-            "flex flex-col items-center justify-center p-8 text-center",
+            "flex flex-col items-center justify-center px-8 py-4 text-center",
             contentClassName
           )}
         >
@@ -148,6 +149,35 @@ const useDropzoneContext = () => {
 
   return context;
 };
+
+function ImageThumbnail({ file }: { file: File }) {
+  const [preview, setPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!file) return;
+
+    const objectUrl = URL.createObjectURL(file);
+    setPreview(objectUrl);
+
+    // Free memory when this component unmounts
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [file]);
+
+  if (!preview) return null;
+
+  return (
+    <div className="relative h-44 w-44 shrink-0 overflow-hidden rounded-2xl border border-(--theme-coffee-200) bg-white shadow-md transition-shadow duration-300 hover:shadow-lg">
+      <Image
+        src={preview}
+        alt={file.name}
+        width={176}
+        height={176}
+        unoptimized
+        className="h-full w-full object-cover object-center"
+      />
+    </div>
+  );
+}
 
 export type DropzoneContentProps = {
   children?: ReactNode;
@@ -171,22 +201,30 @@ export const DropzoneContent = ({ children, className }: DropzoneContentProps) =
         <div
           key={index}
           onClick={(e) => e.stopPropagation()} // Prevent opening file dialog when clicking on file card
-          className="relative flex items-center gap-3 rounded-lg border border-(--theme-coffee-200) bg-white p-3 shadow-sm transition-all hover:border-(--theme-coffee-300) hover:shadow-md"
+          className="relative flex w-full flex-col items-center justify-center rounded-2xl border border-(--theme-coffee-100) bg-white px-6 py-4 text-center shadow-sm transition-shadow duration-300 hover:shadow-md"
         >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-(--theme-coffee-50)">
-            <FileText className="h-5 w-5 text-(--theme-coffee-500)" />
-          </div>
+          {file.type.startsWith("image/") ? (
+            <ImageThumbnail file={file} />
+          ) : (
+            <div className="flex h-44 w-44 shrink-0 items-center justify-center rounded-2xl border border-(--theme-coffee-200) bg-(--theme-coffee-50) shadow-inner">
+              <FileText className="h-20 w-20 text-(--theme-coffee-400)" />
+            </div>
+          )}
 
-          <div className="flex flex-1 flex-col overflow-hidden text-left">
-            <p className="truncate text-sm font-medium text-(--theme-burgundy-700)">{file.name}</p>
-            <p className="text-xs text-(--theme-coffee-400)">{renderBytes(file.size)}</p>
+          <div className="mt-4 flex w-full flex-col items-center gap-2 overflow-hidden text-center">
+            <p className="w-full max-w-[280px] truncate text-sm font-bold text-(--theme-burgundy-950)">
+              {file.name}
+            </p>
+            <span className="rounded-full border border-(--theme-coffee-100) bg-(--theme-coffee-50) px-2.5 py-0.5 text-xs font-semibold text-(--theme-coffee-500)">
+              {renderBytes(file.size)}
+            </span>
           </div>
 
           <Button
             type="button"
             variant="ghost"
             size="sm"
-            className="h-8 w-8 cursor-pointer rounded-lg p-0 text-red-400 opacity-70 hover:bg-red-50 hover:text-red-600 hover:opacity-100"
+            className="absolute top-3.5 right-3.5 h-8 w-8 cursor-pointer rounded-lg p-0 text-red-400 opacity-80 transition-all duration-200 hover:bg-red-50 hover:text-red-600 hover:opacity-100"
             onClick={(e) => {
               e.stopPropagation();
               onRemove?.(file);
@@ -201,7 +239,7 @@ export const DropzoneContent = ({ children, className }: DropzoneContentProps) =
       <Button
         type="button"
         variant="outline"
-        className="mt-2 h-9 cursor-pointer self-center border-(--theme-coffee-200) text-xs font-medium text-(--theme-burgundy-600)"
+        className="mt-3 h-9 cursor-pointer self-center rounded-xl border border-(--theme-coffee-200) bg-white px-4 text-xs font-semibold text-(--theme-burgundy-700) shadow-xs transition-all duration-200 hover:border-(--theme-burgundy-200) hover:bg-(--theme-burgundy-50) hover:text-(--theme-burgundy-800)"
       >
         Replace File
       </Button>

@@ -121,19 +121,19 @@ export function CreateUpdateCategoryDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="mx-auto max-w-[calc(100vw-2.5rem)] overflow-hidden rounded-[24px] border border-(--theme-burgundy-100) p-0 shadow-2xl sm:max-w-lg sm:rounded-[32px]">
-        <DialogHeader className="p-6 pb-2">
+      <DialogContent className="mx-auto flex max-h-[85vh] max-w-[calc(100vw-2.5rem)] flex-col gap-0 overflow-hidden rounded-[24px] border border-(--theme-burgundy-100) p-0 shadow-2xl sm:max-w-lg sm:rounded-[32px]">
+        <DialogHeader className="shrink-0 border-b border-(--theme-burgundy-100)/50 bg-white p-6 pb-4">
           <DialogTitle className="text-2xl font-bold tracking-tight text-(--theme-burgundy-950)">
             {isEditMode ? "Edit Category" : "Add New Category"}
           </DialogTitle>
-          <DialogDescription className="text-sm text-(--theme-coffee-500)">
+          <DialogDescription className="mt-1 text-sm text-(--theme-coffee-500)">
             {isEditMode
               ? "Modify the details of your category. Make sure to click save to apply changes."
               : "Create a new category for organizing your meals and beverages."}
           </DialogDescription>
         </DialogHeader>
 
-        <DialogBody className="space-y-6 p-6 py-4">
+        <DialogBody className="flex-1 overflow-y-auto px-6 py-4">
           <form onSubmit={formik.handleSubmit} className="space-y-6" id="category-dialog-form">
             {/* Category Name */}
             <div className="space-y-2">
@@ -230,7 +230,7 @@ export function CreateUpdateCategoryDialog({
           </form>
         </DialogBody>
 
-        <DialogFooter className="flex items-center justify-end gap-3 border-t border-(--theme-burgundy-100)/50 bg-(--theme-coffee-50)/30 p-6">
+        <DialogFooter className="flex shrink-0 items-center justify-end gap-3 border-t border-(--theme-burgundy-100)/50 bg-(--theme-coffee-50)/30 p-6">
           <Button
             type="button"
             variant="outline"

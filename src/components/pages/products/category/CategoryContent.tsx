@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { Plus, AlertTriangle, Trash2 } from "lucide-react";
+import { Plus, AlertTriangle, Trash2, FolderTree } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBreadcrumb } from "@/components/pages/layout/Breadcrumb";
 import { Toast, useToast } from "@/components/common";
@@ -199,6 +199,31 @@ export function CategoryClient() {
         align="left"
         hidePagination
         manualPagination
+        emptyStateContent={
+          <div className="mx-auto flex max-w-sm flex-col items-center justify-center p-4 text-center">
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-(--theme-coffee-150) bg-(--theme-coffee-50) text-(--theme-coffee-500) shadow-sm">
+              <FolderTree className="h-7 w-7 opacity-85" />
+            </div>
+            <h3 className="text-base font-bold tracking-tight text-(--theme-burgundy-950)">
+              No Categories Yet
+            </h3>
+            <p className="mt-1.5 mb-5 text-xs leading-relaxed text-(--theme-coffee-500)">
+              Start organizing your digital menu board. Add your first category for meals,
+              appetizers, or drinks.
+            </p>
+            <Button
+              variant="premium"
+              onClick={() => {
+                setSelectedCategory(null);
+                setIsFormOpen(true);
+              }}
+              className="flex h-9 cursor-pointer items-center gap-2 rounded-xl px-4 text-xs"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              <span>Create First Category</span>
+            </Button>
+          </div>
+        }
       />
 
       {/* Create / Update Category Dialog */}

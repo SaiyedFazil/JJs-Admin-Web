@@ -69,6 +69,7 @@ export function getColumns(
       ),
       accessorKey: "image",
       enableSorting: false,
+      size: 180,
       cell: ({ row }) => {
         const category = row.original;
         return <CategoryImage src={category.image} name={category.name} />;
@@ -80,10 +81,11 @@ export function getColumns(
         <DataTableColumnHeader column={column} title="ID" className="justify-start" />
       ),
       accessorKey: "id",
+      size: 140,
       cell: ({ row }) => {
         return (
           <span className="rounded-lg border border-(--theme-taupe-200)/60 bg-(--theme-taupe-100) px-2.5 py-1.5 font-mono text-xs font-semibold text-(--theme-coffee-600) shadow-xs">
-            #{row.original.id}
+            {row.original.id}
           </span>
         );
       },
@@ -102,28 +104,11 @@ export function getColumns(
         );
       },
     },
-    {
-      id: "createdAt",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Created Date" className="justify-start" />
-      ),
-      accessorKey: "createdAt",
-      cell: ({ row }) => {
-        const dateStr = row.original.createdAt;
-        if (!dateStr) return <span className="text-muted-foreground text-xs">-</span>;
-        const formattedDate = new Date(dateStr).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        });
-        return (
-          <span className="text-sm font-medium text-(--theme-coffee-500)">{formattedDate}</span>
-        );
-      },
-    },
+
     {
       id: "actions",
       header: () => <div className="w-full text-center font-semibold text-white!">Actions</div>,
+      size: 240,
       cell: ({ row }) => {
         const category = row.original;
         return (

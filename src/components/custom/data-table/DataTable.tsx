@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Inbox } from "lucide-react";
 import { DataTablePagination } from "./DataTablePagination";
 import { DataTableMobileGrid } from "./DataTableMobileGrid";
 import { cn } from "@/lib/utils";
@@ -287,12 +287,21 @@ export function DataTable<TData, TValue>({
                   <TableRow className="bg-white! hover:bg-transparent">
                     <TableCell colSpan={columns.length} className="p-0">
                       {emptyStateContent ? (
-                        <div className="flex items-center justify-center py-12">
+                        <div className="flex w-full items-center justify-center py-8">
                           {emptyStateContent}
                         </div>
                       ) : (
-                        <div className="flex h-24 items-center justify-center text-center">
-                          No results.
+                        <div className="mx-auto flex max-w-sm flex-col items-center justify-center px-4 py-16 text-center">
+                          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-(--theme-coffee-100) bg-(--theme-coffee-50) text-(--theme-coffee-400)">
+                            <Inbox className="h-6 w-6" />
+                          </div>
+                          <h4 className="text-sm font-semibold text-(--theme-burgundy-950)">
+                            No results found
+                          </h4>
+                          <p className="mt-1 max-w-[245px] text-xs leading-relaxed text-(--theme-coffee-500)">
+                            We couldn&apos;t find any records. Try adjusting your filters or search
+                            criteria.
+                          </p>
                         </div>
                       )}
                     </TableCell>

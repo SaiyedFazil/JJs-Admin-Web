@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Table, flexRender } from "@tanstack/react-table";
-import { MoreVertical } from "lucide-react";
+import { Inbox } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DataTableMobileGridProps<TData> {
@@ -25,14 +25,14 @@ export function DataTableMobileGrid<TData>({ table }: DataTableMobileGridProps<T
 
   if (!rows.length) {
     return (
-      <div className="border-border bg-card flex items-center justify-center rounded-xl border border-dashed p-12">
-        <div className="text-center">
-          <div className="bg-muted mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full">
-            <MoreVertical className="text-muted-foreground h-6 w-6" />
+      <div className="flex items-center justify-center rounded-xl border border-dashed border-(--theme-coffee-200) bg-(--theme-coffee-50)/10 p-12">
+        <div className="max-w-xs text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-(--theme-coffee-100) bg-(--theme-coffee-50) text-(--theme-coffee-400)">
+            <Inbox className="h-6 w-6" />
           </div>
-          <p className="text-foreground text-sm font-medium">No results found</p>
-          <p className="text-muted-foreground mt-1 text-xs">
-            Try adjusting your filters or search criteria
+          <p className="text-sm font-semibold text-(--theme-burgundy-950)">No results found</p>
+          <p className="mt-1 text-xs leading-relaxed text-(--theme-coffee-500)">
+            Try adjusting your filters or search criteria.
           </p>
         </div>
       </div>
