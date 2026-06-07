@@ -75,21 +75,7 @@ export function getColumns(
         return <CategoryImage src={category.image} name={category.name} />;
       },
     },
-    {
-      id: "id",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="ID" className="justify-start" />
-      ),
-      accessorKey: "id",
-      size: 140,
-      cell: ({ row }) => {
-        return (
-          <span className="rounded-lg border border-(--theme-taupe-200)/60 bg-(--theme-taupe-100) px-2.5 py-1.5 font-mono text-xs font-semibold text-(--theme-coffee-600) shadow-xs">
-            {row.original.id}
-          </span>
-        );
-      },
-    },
+
     {
       id: "name",
       header: ({ column }) => (

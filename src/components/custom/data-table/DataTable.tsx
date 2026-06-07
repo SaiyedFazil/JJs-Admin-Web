@@ -81,6 +81,8 @@ interface DataTableProps<TData, TValue> {
   disableRowHover?: boolean;
   /** Custom page size options for the pagination dropdown. Defaults to [25, 50, 75, 100] */
   pageSizeOptions?: number[];
+  /** Custom placeholder text for the search input. Defaults to 'Filter...' */
+  searchPlaceholder?: string;
   /** Optional function to determine custom row class names based on row data */
   getRowClassName?: (data: TData) => string;
 }
@@ -109,6 +111,7 @@ export function DataTable<TData, TValue>({
   hideRefreshOnMobile = false,
   disableRowHover = false,
   pageSizeOptions,
+  searchPlaceholder = "Filter...",
   meta,
   getRowClassName,
 }: DataTableProps<TData, TValue>) {
@@ -190,7 +193,7 @@ export function DataTable<TData, TValue>({
             {/* Search Input Place Holder - if searchKey is provided */}
             {searchKey && (
               <Input
-                placeholder="Filter..."
+                placeholder={searchPlaceholder}
                 value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
                 onChange={(event) => table.getColumn(searchKey)?.setFilterValue(event.target.value)}
                 className="h-9 w-full bg-white! shadow-sm sm:max-w-sm"

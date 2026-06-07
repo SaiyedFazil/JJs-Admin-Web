@@ -127,3 +127,31 @@ export const productSchema = (isEdit: boolean) =>
         return primaryCount <= 1; // In edit mode, at most 1 new image is marked primary
       }),
   });
+
+/**
+ * Unified banner validation schema.
+ * @param isEdit - If true, image files are optional. If false, they are required.
+ */
+export const bannerSchema = (isEdit: boolean) =>
+  Yup.object().shape({
+    title: Yup.string()
+      .trim()
+      .required("Banner title is required.")
+      .min(2, "Banner title must be at least 2 characters.")
+      .max(100, "Banner title must be at most 100 characters."),
+    description: Yup.string()
+      .trim()
+      .required("Banner description is required.")
+      .max(250, "Banner description must be at most 250 characters."),
+    banner: isEdit
+      ? imageValidation.nullable().optional()
+      : imageValidation.required("Desktop banner image is required."),
+    mobile_banner: isEdit
+      ? imageValidation.nullable().optional()
+      : imageValidation.required("Mobile banner image is required."),
+    text_color: Yup.string()
+      .trim()
+      .required("Text color code is required.")
+      .matches(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color code (e.g. #FFFFFF)."),
+    is_active: Yup.boolean().required("Active status is required."),
+  });

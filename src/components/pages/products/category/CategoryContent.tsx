@@ -52,6 +52,7 @@ export function CategoryClient() {
 
   // Dialog State
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [dialogKey, setDialogKey] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
@@ -96,6 +97,7 @@ export function CategoryClient() {
 
   const handleEditClick = useCallback((category: Category) => {
     setSelectedCategory(category);
+    setDialogKey((k) => k + 1);
     setIsFormOpen(true);
   }, []);
 
@@ -181,6 +183,7 @@ export function CategoryClient() {
           className="flex cursor-pointer items-center gap-2 self-start sm:self-auto"
           onClick={() => {
             setSelectedCategory(null);
+            setDialogKey((k) => k + 1);
             setIsFormOpen(true);
           }}
         >
@@ -194,6 +197,7 @@ export function CategoryClient() {
         columns={columns}
         data={categories}
         searchKey="name"
+        searchPlaceholder="Search by name..."
         onRefresh={() => fetchCategories(true)}
         isLoading={isRefreshing}
         align="left"
@@ -228,6 +232,7 @@ export function CategoryClient() {
 
       {/* Create / Update Category Dialog */}
       <CreateUpdateCategoryDialog
+        key={dialogKey}
         isOpen={isFormOpen}
         onClose={() => {
           setIsFormOpen(false);
