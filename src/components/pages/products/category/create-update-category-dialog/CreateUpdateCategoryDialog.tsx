@@ -191,12 +191,12 @@ export function CreateUpdateCategoryDialog({
                 <DropzoneEmptyState>
                   {isEditMode && category?.image && !formik.values.category_image ? (
                     <div className="flex flex-col items-center gap-3">
-                      <div className="relative h-28 w-28 overflow-hidden rounded-2xl border border-(--theme-burgundy-100) bg-white shadow-md">
+                      <div className="relative h-64 w-80 overflow-hidden rounded-2xl border border-(--theme-burgundy-100) bg-white shadow-md">
                         <Image
                           src={category.image}
                           alt={category.name}
-                          width={112}
-                          height={112}
+                          width={224}
+                          height={224}
                           unoptimized
                           className="h-full w-full object-cover"
                         />

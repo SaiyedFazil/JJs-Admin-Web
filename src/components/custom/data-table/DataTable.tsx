@@ -65,6 +65,8 @@ interface DataTableProps<TData, TValue> {
   isLoading?: boolean;
   /** Optional custom content to render on the left side of the toolbar (e.g. custom search) */
   customLeftToolbar?: React.ReactNode;
+  /** Optional custom content to render on the right side of the toolbar (e.g. category dropdown) */
+  customRightToolbar?: React.ReactNode;
   /** Optional loading overlay content to render over the table body only (e.g. search loading) */
   searchLoadingContent?: React.ReactNode;
   /** Optional custom empty state content to render inside the table body when no rows exist */
@@ -99,6 +101,7 @@ export function DataTable<TData, TValue>({
   onRefresh,
   isLoading = false,
   customLeftToolbar,
+  customRightToolbar,
   searchLoadingContent,
   emptyStateContent,
   totalRows,
@@ -175,36 +178,39 @@ export function DataTable<TData, TValue>({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
-  const hasToolbarContent = customLeftToolbar || searchKey || onRefresh;
+  const hasToolbarContent = customLeftToolbar || customRightToolbar || searchKey || onRefresh;
 
   return (
     <div className="space-y-4">
       {hasToolbarContent && (
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex flex-1 items-center gap-2">
+        <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex w-full flex-col gap-2 sm:flex-1 sm:flex-row sm:items-center">
             {/* Custom left toolbar content */}
-            {customLeftToolbar}
+            {customLeftToolbar && <div className="w-full sm:w-auto">{customLeftToolbar}</div>}
             {/* Search Input Place Holder - if searchKey is provided */}
             {searchKey && (
               <Input
                 placeholder="Filter..."
                 value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
                 onChange={(event) => table.getColumn(searchKey)?.setFilterValue(event.target.value)}
-                className="h-9 max-w-sm bg-white! shadow-sm"
+                className="h-9 w-full bg-white! shadow-sm sm:max-w-sm"
               />
             )}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+            {customRightToolbar && <div className="w-full sm:w-auto">{customRightToolbar}</div>}
             {onRefresh && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={onRefresh}
                 disabled={isLoading}
-                className={`hover:bg-muted/10! hover:text-foreground! h-9 cursor-pointer gap-2 px-3 shadow-sm transition-all ${hideRefreshOnMobile ? "hidden sm:flex" : "flex"}`}
+                className={`hover:bg-muted/10! hover:text-foreground! h-9 w-full cursor-pointer gap-2 px-3 shadow-sm transition-all sm:w-auto ${
+                  hideRefreshOnMobile ? "hidden sm:flex" : "flex justify-center"
+                }`}
               >
                 <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-                <span className="hidden sm:inline">Refresh</span>
+                <span>Refresh</span>
               </Button>
             )}
           </div>
