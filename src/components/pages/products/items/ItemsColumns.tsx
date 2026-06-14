@@ -90,27 +90,12 @@ export function getColumns(
       },
     },
     {
-      id: "id",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="ID" className="justify-start" />
-      ),
-      accessorKey: "id",
-      size: 90,
-      cell: ({ row }) => {
-        return (
-          <span className="rounded-lg border border-(--theme-taupe-200)/60 bg-(--theme-taupe-100) px-2 py-1 font-mono text-xs font-semibold text-(--theme-coffee-600) shadow-xs">
-            {row.original.id}
-          </span>
-        );
-      },
-    },
-    {
       id: "name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Product Name" className="justify-start" />
       ),
       accessorKey: "name",
-      size: 200,
+      size: 150,
       cell: ({ row }) => {
         return (
           <span className="text-sm font-bold tracking-tight text-(--theme-burgundy-950) transition-colors duration-200 hover:text-(--theme-burgundy-600)">
@@ -125,7 +110,7 @@ export function getColumns(
         <DataTableColumnHeader column={column} title="Category" className="justify-start" />
       ),
       accessorKey: "category.name",
-      size: 150,
+      size: 200,
       cell: ({ row }) => {
         const category = row.original.category;
         return category ? (

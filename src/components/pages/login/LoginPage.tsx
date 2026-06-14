@@ -92,15 +92,18 @@ export function LoginPage() {
   }
 
   return (
-    <div className="bg-background-secondary relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden p-4">
+    <div className="bg-background-secondary relative flex min-h-screen w-full flex-col items-center justify-between overflow-y-auto p-4">
       {/* Background Elements */}
       <AdminBackground />
+
+      {/* Spacer to push card down (so it sits perfectly centered when there is space) */}
+      <div className="h-4 w-full shrink-0 md:h-8" />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="relative z-10 w-full max-w-md"
+        className="relative z-10 my-auto w-full max-w-md shrink-0 py-4"
       >
         {/* Main Card */}
         <div className="glass-effect overflow-hidden rounded-3xl border border-white/20 bg-white/80 shadow-2xl backdrop-blur-xl dark:bg-black/40">
@@ -213,8 +216,8 @@ export function LoginPage() {
         </div>
       </motion.div>
 
-      {/* Footer copyright - positioned at the bottom middle */}
-      <div className="text-foreground-subtle fixed right-0 bottom-6 left-0 z-10 px-4 text-center text-xs">
+      {/* Footer copyright - positioned at the bottom relative to page flow */}
+      <div className="text-foreground-subtle relative z-10 mt-auto w-full shrink-0 px-4 text-center text-xs">
         &copy; {new Date().getFullYear()} JJ&apos;s Kitchen Admin Portal. Secure Access Only.
       </div>
     </div>

@@ -85,7 +85,22 @@ export const productSchema = (isEdit: boolean) =>
       .typeError("Selling price must be a number.")
       .required("Selling price is required.")
       .positive("Selling price must be a positive number.")
-      .max(99999, "Selling price cannot exceed 5 digits."),
+      .max(99999, "Selling price cannot exceed 5 digits.")
+      .test("is-less-than-mrp", "Selling price must be less than MRP.", function (value) {
+        const { mrp } = this.parent;
+        if (
+          value === undefined ||
+          value === null ||
+          mrp === undefined ||
+          mrp === null ||
+          String(mrp).trim() === "" ||
+          isNaN(value) ||
+          isNaN(Number(mrp))
+        ) {
+          return true;
+        }
+        return value <= Number(mrp);
+      }),
     mrp: Yup.number()
       .typeError("MRP must be a number.")
       .required("MRP is required.")
