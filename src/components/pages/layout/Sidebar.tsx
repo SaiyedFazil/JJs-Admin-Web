@@ -20,6 +20,7 @@ import {
   BadgePercent,
   ImagePlay,
   SlidersHorizontal,
+  Warehouse,
 } from "lucide-react";
 
 import {
@@ -86,6 +87,7 @@ const mainNavItems: NavItem[] = [
       { label: "Menu Items", href: "/products/items" },
     ],
   },
+  { icon: Warehouse, label: "Stock Management", href: "/products/stock" },
   { icon: BadgePercent, label: "Offers", href: "/offers" },
   {
     icon: Smartphone,

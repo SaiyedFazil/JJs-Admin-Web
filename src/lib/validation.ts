@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import { ProductStatus } from "@/types";
 
 /**
  * Password Validation Library
@@ -170,3 +171,65 @@ export const bannerSchema = (isEdit: boolean) =>
       .matches(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color code (e.g. #FFFFFF)."),
     is_active: Yup.boolean().required("Active status is required."),
   });
+
+/**
+ * Validation schema for individual product stock details in bulk update
+ */
+export const itemStockSchema = Yup.object().shape({
+  id: Yup.number().required(),
+  available_stock: Yup.number()
+    .typeError("Available Stock must be a number.")
+    .required("Available Stock is required.")
+    .min(0, "Available Stock cannot be less than 0.")
+    .test("less-than-total-stock", "Available Stock cannot exceed Total Stock.", function (value) {
+      const { total_stock } = this.parent;
+      if (
+        value === undefined ||
+        value === null ||
+        total_stock === undefined ||
+        total_stock === null
+      ) {
+        return true;
+      }
+      return value <= total_stock;
+    }),
+  total_stock: Yup.number()
+    .typeError("Total Stock must be a number.")
+    .required("Total Stock is required.")
+    .min(0, "Total Stock cannot be less than 0."),
+  min_order_qty: Yup.number()
+    .typeError("Min Order Qty must be a number.")
+    .required("Min Order Qty is required.")
+    .min(0, "Min Order Qty cannot be less than 0.")
+    .test("less-than-max-order", "Min Order Qty cannot exceed Max Order Qty.", function (value) {
+      const { max_order_qty } = this.parent;
+      if (
+        value === undefined ||
+        value === null ||
+        max_order_qty === undefined ||
+        max_order_qty === null
+      ) {
+        return true;
+      }
+      return value <= max_order_qty;
+    }),
+  max_order_qty: Yup.number()
+    .typeError("Max Order Qty must be a number.")
+    .required("Max Order Qty is required.")
+    .min(0, "Max Order Qty cannot be less than 0."),
+  lead_time: Yup.number()
+    .typeError("Lead Time must be a number.")
+    .required("Lead Time is required.")
+    .min(0, "Lead Time cannot be less than 0."),
+  status: Yup.mixed<ProductStatus>()
+    .oneOf(Object.values(ProductStatus), "Invalid status.")
+    .required("Status is required."),
+  is_not_returnable: Yup.boolean().required("Return Policy is required."),
+});
+
+/**
+ * Validation schema for the bulk stock update form
+ */
+export const bulkStockSchema = Yup.object().shape({
+  products: Yup.array().of(itemStockSchema),
+});

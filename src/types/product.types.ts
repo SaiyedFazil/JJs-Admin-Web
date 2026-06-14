@@ -9,13 +9,18 @@ export interface ProductCategoryRef {
   name: string;
 }
 
+export enum ProductStatus {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+}
+
 export interface Product {
   id: number;
   name: string;
   description: string | null;
   selling_price: string;
   mrp: string;
-  status: string;
+  status: ProductStatus;
   is_veg: boolean;
   createdAt: string;
   updatedAt: string;
@@ -57,4 +62,63 @@ export interface UpdateProductPayload {
   is_veg?: boolean;
   primary_image?: File;
   all_images?: File[];
+}
+
+export interface ItemStock {
+  id: number;
+  name: string;
+  total_stock: number;
+  available_stock: number;
+  min_order_qty: number;
+  max_order_qty: number;
+  lead_time: number;
+  status: ProductStatus;
+  is_not_returnable: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GetItemStockResponse {
+  success: boolean;
+  data: {
+    rows: ItemStock[];
+  };
+  message: string;
+}
+
+export interface BulkUpdateItemStockProduct {
+  id: number;
+  total_stock?: number;
+  available_stock?: number;
+  status?: ProductStatus;
+  is_not_returnable?: boolean;
+  min_order_qty?: number;
+  max_order_qty?: number;
+  lead_time?: number;
+}
+
+export interface BulkUpdateItemStockPayload {
+  products: BulkUpdateItemStockProduct[];
+}
+
+export interface BulkUpdateItemStockResponse {
+  success: boolean;
+  data: boolean;
+  message: string;
+}
+
+export interface UpdateSingleItemStockPayload {
+  total_stock?: number;
+  available_stock?: number;
+  status?: ProductStatus;
+  is_not_returnable?: boolean;
+  min_order_qty?: number;
+  max_order_qty?: number;
+  lead_time?: number;
+}
+
+export interface UpdateSingleItemStockResponse {
+  success: boolean;
+  data: Product;
+  message: string;
 }

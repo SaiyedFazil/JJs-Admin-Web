@@ -36,6 +36,19 @@ function TooltipContent({
   children,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Content>) {
+  let arrowBgClass = "bg-foreground";
+  let arrowFillClass = "fill-foreground";
+
+  if (className) {
+    if (className.includes("bg-red-600")) {
+      arrowBgClass = "bg-red-600";
+      arrowFillClass = "fill-red-600";
+    } else if (className.includes("bg-popover")) {
+      arrowBgClass = "bg-popover";
+      arrowFillClass = "fill-popover";
+    }
+  }
+
   return (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
@@ -50,8 +63,9 @@ function TooltipContent({
         {children}
         <TooltipPrimitive.Arrow
           className={cn(
-            "bg-foreground fill-foreground z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-[2px]",
-            className
+            "z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-[2px]",
+            arrowBgClass,
+            arrowFillClass
           )}
         />
       </TooltipPrimitive.Content>

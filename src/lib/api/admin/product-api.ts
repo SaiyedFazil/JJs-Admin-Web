@@ -5,7 +5,17 @@ import type {
   CreateProductPayload,
   UpdateProductPayload,
   Product,
+  GetItemStockResponse,
+  BulkUpdateItemStockPayload,
+  BulkUpdateItemStockResponse,
+  UpdateSingleItemStockPayload,
+  UpdateSingleItemStockResponse,
 } from "@/types";
+
+export interface GetItemStockParams {
+  search?: string;
+  category?: number;
+}
 
 export interface GetAllProductsParams {
   page?: number;
@@ -155,5 +165,70 @@ export async function deleteProduct(id: number): Promise<{ success: boolean; mes
       404: "Product not found.",
       500: "Failed to delete product. Server error.",
     });
+  }
+}
+
+/**
+ * Fetch stock of all products (Admin / SuperAdmin)
+ */
+export async function getItemStock(params?: GetItemStockParams): Promise<GetItemStockResponse> {
+  try {
+    const response = await adminAxiosInstance.get<GetItemStockResponse>(
+      "/admin/product/item-stock",
+      { params }
+    );
+    return response.data;
+  } catch (error) {
+    return handleApiError(error, {
+      401: "Session expired. Please log in again.",
+      403: "You are not authorized to view product stock details.",
+      500: "Internal server error. Failed to retrieve product stock.",
+    }) as unknown as GetItemStockResponse;
+  }
+}
+
+/**
+ * Bulk-update item stock for multiple products (Admin / SuperAdmin)
+ */
+export async function updateMultiItemStock(
+  payload: BulkUpdateItemStockPayload
+): Promise<BulkUpdateItemStockResponse> {
+  try {
+    const response = await adminAxiosInstance.patch<BulkUpdateItemStockResponse>(
+      "/admin/product/item-stock",
+      payload
+    );
+    return response.data;
+  } catch (error) {
+    return handleApiError(error, {
+      401: "Session expired. Please log in again.",
+      403: "You are not authorized to update product stock details.",
+      400: "Validation error. Please verify the stock quantities and fields.",
+      500: "Failed to update item stocks. Server error.",
+    }) as unknown as BulkUpdateItemStockResponse;
+  }
+}
+
+/**
+ * Update item stock for a single product (Admin / SuperAdmin)
+ */
+export async function updateSingleItemStock(
+  id: number,
+  payload: UpdateSingleItemStockPayload
+): Promise<UpdateSingleItemStockResponse> {
+  try {
+    const response = await adminAxiosInstance.patch<UpdateSingleItemStockResponse>(
+      `/admin/product/item-stock/${id}`,
+      payload
+    );
+    return response.data;
+  } catch (error) {
+    return handleApiError(error, {
+      401: "Session expired. Please log in again.",
+      403: "You are not authorized to update product stock details.",
+      404: "Product stock record not found.",
+      400: "Validation error. Please verify the stock fields.",
+      500: "Failed to update item stock. Server error.",
+    }) as unknown as UpdateSingleItemStockResponse;
   }
 }

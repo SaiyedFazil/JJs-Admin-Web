@@ -1,9 +1,61 @@
 "use client";
 
 import * as React from "react";
-import { Table, flexRender } from "@tanstack/react-table";
+import { Table, flexRender, Header } from "@tanstack/react-table";
 import { Inbox } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+function formatColumnId(id: string): string {
+  return id
+    .replace(/_/g, " ")
+    .replace(/([A-Z])/g, " $1")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function getHeaderLabel<TData, TValue>(
+  header: Header<TData, TValue> | undefined,
+  columnId: string
+): string {
+  if (!header) return formatColumnId(columnId);
+
+  const headerDef = header.column.columnDef.header;
+  if (typeof headerDef === "function") {
+    try {
+      const headerContext = header.getContext();
+      const rendered = headerDef(headerContext);
+      if (React.isValidElement(rendered)) {
+        const props = rendered.props as Record<string, unknown>;
+        if (props?.title && typeof props.title === "string") {
+          return props.title;
+        }
+        if (props?.children && typeof props.children === "string") {
+          return props.children;
+        }
+      }
+    } catch {
+      // ignore and fallback
+    }
+    return formatColumnId(columnId);
+  }
+
+  if (headerDef && typeof headerDef !== "function") {
+    if (typeof headerDef === "string") return headerDef;
+    const element = headerDef as unknown as React.ReactElement;
+    if (React.isValidElement(element)) {
+      const props = element.props as Record<string, unknown>;
+      if (props?.title && typeof props.title === "string") {
+        return props.title;
+      }
+      if (props?.children && typeof props.children === "string") {
+        return props.children;
+      }
+    }
+  }
+
+  return formatColumnId(columnId);
+}
 
 interface DataTableMobileGridProps<TData> {
   table: Table<TData>;
@@ -75,26 +127,7 @@ export function DataTableMobileGrid<TData>({ table }: DataTableMobileGridProps<T
                 {/* Primary Column Label */}
                 {primaryHeader && (
                   <p className="text-secondary mb-1 text-[10px] font-bold tracking-wider uppercase">
-                    {typeof primaryHeader.column.columnDef.header === "function"
-                      ? (() => {
-                          // Extract title from the header component if possible
-                          const headerContext = primaryHeader.getContext();
-                          const headerElement = flexRender(
-                            primaryHeader.column.columnDef.header,
-                            headerContext
-                          );
-                          // Try to get the title prop from DataTableColumnHeader
-                          if (React.isValidElement(headerElement)) {
-                            const props = headerElement.props as Record<string, unknown>;
-                            if (props?.title && typeof props.title === "string") {
-                              return props.title;
-                            }
-                          }
-                          return primaryHeader.id
-                            .replace(/([A-Z])/g, " $1")
-                            .replace(/^./, (str) => str.toUpperCase());
-                        })()
-                      : primaryHeader.column.columnDef.header || primaryHeader.id}
+                    {getHeaderLabel(primaryHeader, primaryHeader.id)}
                   </p>
                 )}
                 {/* Primary Column Value */}
@@ -110,23 +143,7 @@ export function DataTableMobileGrid<TData>({ table }: DataTableMobileGridProps<T
             <div className="flex-1 space-y-2.5 p-3.5">
               {remainingCells.map((cell) => {
                 const header = headers.find((h) => h.id === cell.column.id);
-                const headerLabel = (() => {
-                  if (!header) return cell.column.id;
-                  if (typeof header.column.columnDef.header === "function") {
-                    const headerContext = header.getContext();
-                    const headerElement = flexRender(header.column.columnDef.header, headerContext);
-                    if (React.isValidElement(headerElement)) {
-                      const props = headerElement.props as Record<string, unknown>;
-                      if (props?.title && typeof props.title === "string") {
-                        return props.title;
-                      }
-                    }
-                    return cell.column.id
-                      .replace(/([A-Z])/g, " $1")
-                      .replace(/^./, (str) => str.toUpperCase());
-                  }
-                  return header.column.columnDef.header || cell.column.id;
-                })();
+                const headerLabel = getHeaderLabel(header, cell.column.id);
 
                 return (
                   <div
