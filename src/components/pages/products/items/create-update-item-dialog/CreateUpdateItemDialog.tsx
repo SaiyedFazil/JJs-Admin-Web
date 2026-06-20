@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { useFormik } from "formik";
 import { Loader2 } from "lucide-react";
 import {
@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { productSchema } from "@/lib/validation";
-import { createProduct, updateProduct } from "@/lib/api/admin/product-api";
+import { createProduct, updateProduct, getProduct } from "@/lib/api/admin/product-api";
 import { getAllCategories } from "@/lib/api/admin/category-api";
 import type { Product, Category, UpdateProductPayload } from "@/types";
 import { FoodTypeSelector } from "./components/FoodTypeSelector";
@@ -45,6 +45,34 @@ export function CreateUpdateItemDialog({
 }: CreateUpdateItemDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isEditMode = !!product;
+
+  const [detailedProduct, setDetailedProduct] = useState<Product | null>(product);
+  const [isLoadingProduct, setIsLoadingProduct] = useState(false);
+
+  // Fetch detailed product info on open in edit mode
+  useEffect(() => {
+    if (isEditMode && product?.id) {
+      const fetchProductDetails = async () => {
+        setIsLoadingProduct(true);
+        try {
+          const response = await getProduct(product.id);
+          const isSuccess =
+            response.success || (response as unknown as { status?: boolean }).status === true;
+          if (isSuccess && response.data) {
+            setDetailedProduct(response.data);
+          } else {
+            showToast(response.message || "Failed to load product details.", "error");
+          }
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : "Failed to load product details.";
+          showToast(msg, "error");
+        } finally {
+          setIsLoadingProduct(false);
+        }
+      };
+      fetchProductDetails();
+    }
+  }, [isEditMode, product?.id, showToast]);
 
   // Category selection list states
   const [categories, setCategories] = useState<Category[]>([]);
@@ -80,24 +108,25 @@ export function CreateUpdateItemDialog({
 
   // Convert API image references to form compatible images list
   const initialImages: FormImage[] = useMemo(() => {
-    if (product && product.images) {
-      return product.images.map((img) => ({
+    if (detailedProduct && detailedProduct.images) {
+      return detailedProduct.images.map((img) => ({
         id: img.id,
         previewUrl: img.image,
         is_primary: img.is_primary,
       }));
     }
     return [];
-  }, [product]);
+  }, [detailedProduct]);
 
   const formik = useFormik({
     initialValues: {
-      name: product ? product.name : "",
-      description: product ? product.description || "" : "",
-      selling_price: product ? String(product.selling_price) : "",
-      mrp: product ? String(product.mrp) : "",
-      category_id: product && product.category ? String(product.category.id) : "",
-      is_veg: product ? !!product.is_veg : false,
+      name: detailedProduct ? detailedProduct.name : "",
+      description: detailedProduct ? detailedProduct.description || "" : "",
+      selling_price: detailedProduct ? String(detailedProduct.selling_price) : "",
+      mrp: detailedProduct ? String(detailedProduct.mrp) : "",
+      category_id:
+        detailedProduct && detailedProduct.category ? String(detailedProduct.category.id) : "",
+      is_veg: detailedProduct ? !!detailedProduct.is_veg : false,
       images: initialImages,
     },
     validationSchema: productSchema(isEditMode),
@@ -105,32 +134,32 @@ export function CreateUpdateItemDialog({
     onSubmit: async (values) => {
       setIsSubmitting(true);
       try {
-        if (isEditMode && product) {
+        if (isEditMode && detailedProduct) {
           // Prepare PATCH payload with changed values
           const payload: Partial<UpdateProductPayload> = {};
           let hasChanges = false;
 
-          if (values.name.trim() !== product.name) {
+          if (values.name.trim() !== detailedProduct.name) {
             payload.name = values.name.trim();
             hasChanges = true;
           }
-          if (values.description.trim() !== (product.description || "")) {
+          if (values.description.trim() !== (detailedProduct.description || "")) {
             payload.description = values.description.trim();
             hasChanges = true;
           }
-          if (Number(values.selling_price) !== Number(product.selling_price)) {
+          if (Number(values.selling_price) !== Number(detailedProduct.selling_price)) {
             payload.selling_price = Number(values.selling_price);
             hasChanges = true;
           }
-          if (Number(values.mrp) !== Number(product.mrp)) {
+          if (Number(values.mrp) !== Number(detailedProduct.mrp)) {
             payload.mrp = Number(values.mrp);
             hasChanges = true;
           }
-          if (Number(values.category_id) !== (product.category?.id || 0)) {
+          if (Number(values.category_id) !== (detailedProduct.category?.id || 0)) {
             payload.category_id = Number(values.category_id);
             hasChanges = true;
           }
-          if (values.is_veg !== (product.is_veg ?? true)) {
+          if (values.is_veg !== (detailedProduct.is_veg ?? true)) {
             payload.is_veg = values.is_veg;
             hasChanges = true;
           }
@@ -163,7 +192,7 @@ export function CreateUpdateItemDialog({
             return;
           }
 
-          const response = await updateProduct(product.id, payload);
+          const response = await updateProduct(detailedProduct.id, payload);
           const isSuccess =
             response.success || (response as unknown as { status?: boolean }).status === true;
 
@@ -233,12 +262,12 @@ export function CreateUpdateItemDialog({
   // Determine if the action button should be enabled
   const isChanged =
     !isEditMode ||
-    formik.values.name.trim() !== product.name ||
-    formik.values.description.trim() !== (product.description || "") ||
-    Number(formik.values.selling_price) !== Number(product.selling_price) ||
-    Number(formik.values.mrp) !== Number(product.mrp) ||
-    Number(formik.values.category_id) !== (product.category?.id || 0) ||
-    formik.values.is_veg !== (product.is_veg ?? true) ||
+    formik.values.name.trim() !== (detailedProduct?.name || "") ||
+    formik.values.description.trim() !== (detailedProduct?.description || "") ||
+    Number(formik.values.selling_price) !== Number(detailedProduct?.selling_price || 0) ||
+    Number(formik.values.mrp) !== Number(detailedProduct?.mrp || 0) ||
+    Number(formik.values.category_id) !== (detailedProduct?.category?.id || 0) ||
+    formik.values.is_veg !== (detailedProduct?.is_veg ?? true) ||
     formik.values.images.length !== initialImages.length ||
     formik.values.images.some((img, i) => {
       const initImg = initialImages[i];
@@ -269,212 +298,227 @@ export function CreateUpdateItemDialog({
 
         <DialogBody
           className={`flex-1 ${
-            hasImages
+            hasImages && !isLoadingProduct
               ? "overflow-y-auto p-0 lg:flex lg:min-h-0 lg:flex-col lg:overflow-y-hidden"
               : "overflow-y-auto px-6 py-4"
           }`}
         >
-          <form
-            onSubmit={formik.handleSubmit}
-            id="product-dialog-form"
-            className={
-              hasImages
-                ? "grid grid-cols-1 gap-6 lg:h-full lg:min-h-0 lg:flex-1 lg:grid-cols-12 lg:gap-0"
-                : "space-y-5"
-            }
-          >
-            {/* Main Form Fields (Left Column when images exist) */}
-            <div
+          {isLoadingProduct ? (
+            <div className="flex h-64 w-full flex-col items-center justify-center gap-3 bg-white">
+              <Loader2 className="h-8 w-8 animate-spin text-(--theme-burgundy-950)" />
+              <span className="text-xs font-semibold text-(--theme-coffee-500)">
+                Loading details...
+              </span>
+            </div>
+          ) : (
+            <form
+              onSubmit={formik.handleSubmit}
+              id="product-dialog-form"
               className={
                 hasImages
-                  ? "space-y-5 px-6 py-4 lg:col-span-7 lg:h-full lg:overflow-y-auto lg:px-6 lg:py-4 lg:pr-6 lg:pb-6 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-transparent"
+                  ? "grid grid-cols-1 gap-6 lg:h-full lg:min-h-0 lg:flex-1 lg:grid-cols-12 lg:gap-0"
                   : "space-y-5"
               }
             >
-              {/* Item Name (Full Width) */}
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="name"
-                  className="flex items-center gap-1 text-xs font-semibold text-(--theme-burgundy-950)"
-                >
-                  Item Name <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder="e.g. Chicken Shawarma"
-                  value={formik.values.name}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  disabled={isSubmitting}
-                  className={`h-11 rounded-xl border-(--theme-burgundy-200) bg-white text-(--theme-burgundy-950) placeholder:text-(--theme-coffee-300) focus:border-(--theme-taupe) focus:ring-1 focus:ring-(--theme-taupe) ${
-                    formik.touched.name && formik.errors.name ? "border-red-500" : ""
-                  }`}
-                />
-                {formik.touched.name && formik.errors.name && (
-                  <p className="text-xs font-medium text-red-500">{formik.errors.name}</p>
-                )}
-              </div>
-
-              {/* Category and Veg/Non-Veg Selection (1/2 width each) */}
-              <div className="grid gap-4 sm:grid-cols-2">
-                <CategorySelect
-                  value={formik.values.category_id}
-                  onChange={(val) => {
-                    formik.setFieldValue("category_id", val);
-                    formik.setFieldTouched("category_id", true, false);
-                  }}
-                  disabled={isSubmitting}
-                  hasError={!!(formik.touched.category_id && formik.errors.category_id)}
-                  errorMessage={formik.errors.category_id}
-                  categories={categories}
-                  isLoadingCategories={isLoadingCategories}
-                  onOpenChange={handleDropdownOpenChange}
-                  isEditMode={isEditMode}
-                  productCategory={product && product.category ? product.category : undefined}
-                />
-
-                <FoodTypeSelector
-                  value={formik.values.is_veg}
-                  onChange={(val) => {
-                    formik.setFieldValue("is_veg", val);
-                    formik.setFieldTouched("is_veg", true, false);
-                  }}
-                  disabled={isSubmitting}
-                  hasError={!!(formik.touched.is_veg && formik.errors.is_veg)}
-                  errorMessage={formik.errors.is_veg}
-                />
-              </div>
-
-              {/* MRP and Selling Price (1/2 width each) */}
-              <div className="grid gap-4 sm:grid-cols-2">
+              {/* Main Form Fields (Left Column when images exist) */}
+              <div
+                className={
+                  hasImages
+                    ? "space-y-5 px-6 py-4 lg:col-span-7 lg:h-full lg:overflow-y-auto lg:px-6 lg:py-4 lg:pr-6 lg:pb-6 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-transparent"
+                    : "space-y-5"
+                }
+              >
+                {/* Item Name (Full Width) */}
                 <div className="space-y-1.5">
                   <Label
-                    htmlFor="mrp"
+                    htmlFor="name"
                     className="flex items-center gap-1 text-xs font-semibold text-(--theme-burgundy-950)"
                   >
-                    MRP (Maximum Retail Price) <span className="text-red-500">*</span>
+                    Item Name <span className="text-red-500">*</span>
                   </Label>
                   <Input
-                    id="mrp"
-                    name="mrp"
+                    id="name"
+                    name="name"
                     type="text"
-                    placeholder="e.g. 300"
-                    value={formik.values.mrp}
+                    placeholder="e.g. Chicken Shawarma"
+                    value={formik.values.name}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     disabled={isSubmitting}
                     className={`h-11 rounded-xl border-(--theme-burgundy-200) bg-white text-(--theme-burgundy-950) placeholder:text-(--theme-coffee-300) focus:border-(--theme-taupe) focus:ring-1 focus:ring-(--theme-taupe) ${
-                      formik.touched.mrp && formik.errors.mrp ? "border-red-500" : ""
+                      formik.touched.name && formik.errors.name ? "border-red-500" : ""
                     }`}
                   />
-                  {formik.touched.mrp && formik.errors.mrp && (
-                    <p className="text-xs font-medium text-red-500">{formik.errors.mrp}</p>
+                  {formik.touched.name && formik.errors.name && (
+                    <p className="text-xs font-medium text-red-500">{formik.errors.name}</p>
                   )}
                 </div>
 
+                {/* Category and Veg/Non-Veg Selection (1/2 width each) */}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <CategorySelect
+                    value={formik.values.category_id}
+                    onChange={(val) => {
+                      formik.setFieldValue("category_id", val);
+                      formik.setFieldTouched("category_id", true, false);
+                    }}
+                    disabled={isSubmitting}
+                    hasError={!!(formik.touched.category_id && formik.errors.category_id)}
+                    errorMessage={formik.errors.category_id}
+                    categories={categories}
+                    isLoadingCategories={isLoadingCategories}
+                    onOpenChange={handleDropdownOpenChange}
+                    isEditMode={isEditMode}
+                    productCategory={
+                      detailedProduct && detailedProduct.category
+                        ? detailedProduct.category
+                        : undefined
+                    }
+                  />
+
+                  <FoodTypeSelector
+                    value={formik.values.is_veg}
+                    onChange={(val) => {
+                      formik.setFieldValue("is_veg", val);
+                      formik.setFieldTouched("is_veg", true, false);
+                    }}
+                    disabled={isSubmitting}
+                    hasError={!!(formik.touched.is_veg && formik.errors.is_veg)}
+                    errorMessage={formik.errors.is_veg}
+                  />
+                </div>
+
+                {/* MRP and Selling Price (1/2 width each) */}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="mrp"
+                      className="flex items-center gap-1 text-xs font-semibold text-(--theme-burgundy-950)"
+                    >
+                      MRP (Maximum Retail Price) <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="mrp"
+                      name="mrp"
+                      type="text"
+                      placeholder="e.g. 300"
+                      value={formik.values.mrp}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      disabled={isSubmitting}
+                      className={`h-11 rounded-xl border-(--theme-burgundy-200) bg-white text-(--theme-burgundy-950) placeholder:text-(--theme-coffee-300) focus:border-(--theme-taupe) focus:ring-1 focus:ring-(--theme-taupe) ${
+                        formik.touched.mrp && formik.errors.mrp ? "border-red-500" : ""
+                      }`}
+                    />
+                    {formik.touched.mrp && formik.errors.mrp && (
+                      <p className="text-xs font-medium text-red-500">{formik.errors.mrp}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="selling_price"
+                      className="flex items-center gap-1 text-xs font-semibold text-(--theme-burgundy-950)"
+                    >
+                      Selling Price <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="selling_price"
+                      name="selling_price"
+                      type="text"
+                      placeholder="e.g. 250"
+                      value={formik.values.selling_price}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      disabled={isSubmitting}
+                      className={`h-11 rounded-xl border-(--theme-burgundy-200) bg-white text-(--theme-burgundy-950) placeholder:text-(--theme-coffee-300) focus:border-(--theme-taupe) focus:ring-1 focus:ring-(--theme-taupe) ${
+                        formik.touched.selling_price && formik.errors.selling_price
+                          ? "border-red-500"
+                          : ""
+                      }`}
+                    />
+                    {formik.touched.selling_price && formik.errors.selling_price && (
+                      <p className="text-xs font-medium text-red-500">
+                        {formik.errors.selling_price}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Description Textarea */}
                 <div className="space-y-1.5">
                   <Label
-                    htmlFor="selling_price"
+                    htmlFor="description"
                     className="flex items-center gap-1 text-xs font-semibold text-(--theme-burgundy-950)"
                   >
-                    Selling Price <span className="text-red-500">*</span>
+                    Description <span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    id="selling_price"
-                    name="selling_price"
-                    type="text"
-                    placeholder="e.g. 250"
-                    value={formik.values.selling_price}
+                  <Textarea
+                    id="description"
+                    name="description"
+                    placeholder="Describe the taste profile, ingredients, allergens, or serving suggestions..."
+                    value={formik.values.description}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     disabled={isSubmitting}
-                    className={`h-11 rounded-xl border-(--theme-burgundy-200) bg-white text-(--theme-burgundy-950) placeholder:text-(--theme-coffee-300) focus:border-(--theme-taupe) focus:ring-1 focus:ring-(--theme-taupe) ${
-                      formik.touched.selling_price && formik.errors.selling_price
+                    maxLength={500}
+                    className={`min-h-[90px] rounded-xl border-(--theme-burgundy-200) bg-white text-(--theme-burgundy-950) placeholder:text-(--theme-coffee-300) focus:border-(--theme-taupe) focus:ring-1 focus:ring-(--theme-taupe) ${
+                      formik.touched.description && formik.errors.description
                         ? "border-red-500"
                         : ""
                     }`}
                   />
-                  {formik.touched.selling_price && formik.errors.selling_price && (
-                    <p className="text-xs font-medium text-red-500">
-                      {formik.errors.selling_price}
-                    </p>
+                  <div className="text-muted-foreground flex justify-between text-[10px]">
+                    <span>Maximum 500 characters</span>
+                    <span>{formik.values.description.length}/500</span>
+                  </div>
+                  {formik.touched.description && formik.errors.description && (
+                    <p className="text-xs font-medium text-red-500">{formik.errors.description}</p>
                   )}
                 </div>
-              </div>
 
-              {/* Description Textarea */}
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="description"
-                  className="flex items-center gap-1 text-xs font-semibold text-(--theme-burgundy-950)"
-                >
-                  Description <span className="text-red-500">*</span>
-                </Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  placeholder="Describe the taste profile, ingredients, allergens, or serving suggestions..."
-                  value={formik.values.description}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
+                {/* Image Upload Section */}
+                <ImageUploadSection
+                  images={formik.values.images}
+                  onChange={(updatedImages) => {
+                    formik.setFieldValue("images", updatedImages);
+                    formik.setFieldTouched("images", true, false);
+                  }}
                   disabled={isSubmitting}
-                  maxLength={500}
-                  className={`min-h-[90px] rounded-xl border-(--theme-burgundy-200) bg-white text-(--theme-burgundy-950) placeholder:text-(--theme-coffee-300) focus:border-(--theme-taupe) focus:ring-1 focus:ring-(--theme-taupe) ${
-                    formik.touched.description && formik.errors.description ? "border-red-500" : ""
-                  }`}
+                  showToast={showToast}
+                  hasError={!!(formik.touched.images && formik.errors.images)}
+                  errorMessage={
+                    typeof formik.errors.images === "string" ? formik.errors.images : undefined
+                  }
+                  hidePreview={hasImages}
                 />
-                <div className="text-muted-foreground flex justify-between text-[10px]">
-                  <span>Maximum 500 characters</span>
-                  <span>{formik.values.description.length}/500</span>
-                </div>
-                {formik.touched.description && formik.errors.description && (
-                  <p className="text-xs font-medium text-red-500">{formik.errors.description}</p>
-                )}
               </div>
 
-              {/* Image Upload Section */}
-              <ImageUploadSection
-                images={formik.values.images}
-                onChange={(updatedImages) => {
-                  formik.setFieldValue("images", updatedImages);
-                  formik.setFieldTouched("images", true, false);
-                }}
-                disabled={isSubmitting}
-                showToast={showToast}
-                hasError={!!(formik.touched.images && formik.errors.images)}
-                errorMessage={
-                  typeof formik.errors.images === "string" ? formik.errors.images : undefined
-                }
-                hidePreview={hasImages}
-              />
-            </div>
-
-            {/* Gallery Section (Right Column when images exist) */}
-            {hasImages && (
-              <div className="flex flex-col border-t border-(--theme-burgundy-100)/50 lg:col-span-5 lg:h-full lg:min-h-0 lg:border-t-0 lg:border-l">
-                <div className="flex shrink-0 items-center justify-between border-b border-(--theme-burgundy-100)/50 px-6 pt-4 pb-4">
-                  <h3 className="text-xs font-bold tracking-wider text-(--theme-burgundy-950) uppercase">
-                    Uploaded Images
-                  </h3>
-                  <span className="rounded-full bg-(--theme-burgundy-50) px-2.5 py-0.5 text-xs font-semibold text-(--theme-burgundy-700)">
-                    {formik.values.images.length} / 10
-                  </span>
+              {/* Gallery Section (Right Column when images exist) */}
+              {hasImages && (
+                <div className="flex flex-col border-t border-(--theme-burgundy-100)/50 lg:col-span-5 lg:h-full lg:min-h-0 lg:border-t-0 lg:border-l">
+                  <div className="flex shrink-0 items-center justify-between border-b border-(--theme-burgundy-100)/50 px-6 pt-4 pb-4">
+                    <h3 className="text-xs font-bold tracking-wider text-(--theme-burgundy-950) uppercase">
+                      Uploaded Images
+                    </h3>
+                    <span className="rounded-full bg-(--theme-burgundy-50) px-2.5 py-0.5 text-xs font-semibold text-(--theme-burgundy-700)">
+                      {formik.values.images.length} / 10
+                    </span>
+                  </div>
+                  <div className="flex-1 overflow-y-auto px-6 pt-4 pb-6 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-transparent">
+                    <ImagePreviewGrid
+                      images={formik.values.images}
+                      onChange={(updatedImages) => {
+                        formik.setFieldValue("images", updatedImages);
+                        formik.setFieldTouched("images", true, false);
+                      }}
+                      disabled={isSubmitting}
+                    />
+                  </div>
                 </div>
-                <div className="flex-1 overflow-y-auto px-6 pt-4 pb-6 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-transparent">
-                  <ImagePreviewGrid
-                    images={formik.values.images}
-                    onChange={(updatedImages) => {
-                      formik.setFieldValue("images", updatedImages);
-                      formik.setFieldTouched("images", true, false);
-                    }}
-                    disabled={isSubmitting}
-                  />
-                </div>
-              </div>
-            )}
-          </form>
+              )}
+            </form>
+          )}
         </DialogBody>
 
         <DialogFooter className="flex shrink-0 items-center justify-end gap-3 border-t border-(--theme-burgundy-100)/50 bg-(--theme-coffee-50)/30 p-6">
@@ -490,7 +534,7 @@ export function CreateUpdateItemDialog({
           <Button
             type="submit"
             form="product-dialog-form"
-            disabled={isSubmitting || !isValidAndChanged}
+            disabled={isSubmitting || !isValidAndChanged || isLoadingProduct}
             variant="premium"
             className="flex h-10 items-center gap-2 rounded-lg px-6"
           >

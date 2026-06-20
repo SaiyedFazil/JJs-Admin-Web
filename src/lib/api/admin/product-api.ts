@@ -46,6 +46,29 @@ export async function getAllProducts(
 }
 
 /**
+ * Fetch a single product by id (Admin / SuperAdmin)
+ */
+export async function getProduct(
+  id: number
+): Promise<{ success: boolean; data?: Product; message: string }> {
+  try {
+    const response = await adminAxiosInstance.get<{
+      success: boolean;
+      data?: Product;
+      message: string;
+    }>(`/admin/product/get-product/${id}`);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error, {
+      401: "Session expired. Please log in again.",
+      403: "You are not authorized to view this product.",
+      404: "Product not found.",
+      500: "Internal server error. Failed to retrieve product details.",
+    }) as unknown as { success: boolean; data?: Product; message: string };
+  }
+}
+
+/**
  * Create a new product (Admin / SuperAdmin)
  */
 export async function createProduct(

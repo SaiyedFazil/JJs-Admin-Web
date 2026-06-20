@@ -36,7 +36,7 @@ export function ImagePreviewGrid({
     <div className="grid w-full grid-cols-1 gap-4">
       {images.map((img, index) => (
         <div
-          key={img.id || index}
+          key={img.previewUrl}
           onClick={(e) => e.stopPropagation()} // Stop bubbling
           className={`relative flex w-full flex-col overflow-hidden rounded-2xl border bg-white shadow-xs transition-all duration-200 hover:shadow-md ${
             img.is_primary
