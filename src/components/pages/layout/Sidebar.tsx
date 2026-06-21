@@ -74,8 +74,8 @@ const mainNavItems: NavItem[] = [
     label: "Users Management",
     href: "/users",
     items: [
-      { label: "Consultants", href: "/users/consultants" },
-      { label: "Clients", href: "/users/clients" },
+      { label: "Application Users", href: "/users/application-users" },
+      { label: "Admin & Rider Users", href: "/users/admin-rider-users" },
     ],
   },
   {

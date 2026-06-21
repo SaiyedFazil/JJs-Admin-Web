@@ -12,3 +12,4 @@ export * from "./auth.types";
 export * from "./category.types";
 export * from "./product.types";
 export * from "./banner.types";
+export * from "./user.types";
