@@ -150,6 +150,14 @@ export async function updateProduct(
       });
     }
 
+    if (payload.primary_image_id !== undefined) {
+      formData.append("primary_image_id", String(payload.primary_image_id));
+    }
+
+    if (payload.retained_image_ids !== undefined) {
+      formData.append("retained_image_ids", JSON.stringify(payload.retained_image_ids));
+    }
+
     const response = await adminAxiosInstance.patch<{
       success: boolean;
       data?: Product;

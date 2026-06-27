@@ -62,6 +62,8 @@ export interface UpdateProductPayload {
   is_veg?: boolean;
   primary_image?: File;
   all_images?: File[];
+  retained_image_ids?: number[];
+  primary_image_id?: number;
 }
 
 export interface ItemStock {

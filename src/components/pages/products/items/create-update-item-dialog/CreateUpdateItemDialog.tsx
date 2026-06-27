@@ -170,7 +170,12 @@ export function CreateUpdateItemDialog({
 
           if (primaryFileObj && primaryFileObj.file) {
             payload.primary_image = primaryFileObj.file;
-            hasChanges = true;
+          } else {
+            // If primary is an existing image, send its ID
+            const existingPrimary = values.images.find((img) => !img.file && img.is_primary);
+            if (existingPrimary && existingPrimary.id !== undefined) {
+              payload.primary_image_id = existingPrimary.id;
+            }
           }
 
           const additionalFiles = newFormImages
@@ -178,11 +183,30 @@ export function CreateUpdateItemDialog({
             .map((img) => img.file as File);
           if (additionalFiles.length > 0) {
             payload.all_images = additionalFiles;
-            hasChanges = true;
           }
 
-          // If the list of images changed, consider it a change
-          if (values.images.length !== initialImages.length) {
+          // Send list of kept existing image IDs so backend knows what to retain and what to delete
+          const retainedImageIds = values.images
+            .filter((img) => !img.file && img.id !== undefined)
+            .map((img) => img.id as number);
+          payload.retained_image_ids = retainedImageIds;
+
+          // Check if any existing image was removed/deleted
+          const initialIds = initialImages.map((img) => img.id).filter(Boolean);
+          const currentIds = values.images.map((img) => img.id).filter(Boolean);
+          const anyImageDeleted = initialIds.some((id) => !currentIds.includes(id));
+
+          // Check if primary image changed (either new file is primary, or a different existing image is primary)
+          const initialPrimary = initialImages.find((img) => img.is_primary);
+          const currentPrimary = values.images.find((img) => img.is_primary);
+          const primaryChanged =
+            initialPrimary?.id !== currentPrimary?.id ||
+            initialPrimary?.previewUrl !== currentPrimary?.previewUrl;
+
+          // Check if any new image files were uploaded
+          const hasNewFiles = newFormImages.length > 0;
+
+          if (primaryChanged || anyImageDeleted || hasNewFiles) {
             hasChanges = true;
           }
 
@@ -259,7 +283,25 @@ export function CreateUpdateItemDialog({
     onClose();
   };
 
-  // Determine if the action button should be enabled
+  const hasImageChanges = useMemo(() => {
+    // If lengths are different, there are changes
+    if (formik.values.images.length !== initialImages.length) return true;
+
+    // Check if any image is a new file
+    if (formik.values.images.some((img) => !!img.file)) return true;
+
+    // Check if the order/identity or primary state of existing images changed
+    for (let i = 0; i < formik.values.images.length; i++) {
+      const img = formik.values.images[i];
+      const initImg = initialImages[i];
+      if (!initImg || img.id !== initImg.id || img.is_primary !== initImg.is_primary) {
+        return true;
+      }
+    }
+
+    return false;
+  }, [formik.values.images, initialImages]);
+
   const isChanged =
     !isEditMode ||
     formik.values.name.trim() !== (detailedProduct?.name || "") ||
@@ -268,11 +310,7 @@ export function CreateUpdateItemDialog({
     Number(formik.values.mrp) !== Number(detailedProduct?.mrp || 0) ||
     Number(formik.values.category_id) !== (detailedProduct?.category?.id || 0) ||
     formik.values.is_veg !== (detailedProduct?.is_veg ?? true) ||
-    formik.values.images.length !== initialImages.length ||
-    formik.values.images.some((img, i) => {
-      const initImg = initialImages[i];
-      return !initImg || img.is_primary !== initImg.is_primary;
-    });
+    hasImageChanges;
 
   const isValidAndChanged = formik.isValid && isChanged;
 
